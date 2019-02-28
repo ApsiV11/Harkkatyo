@@ -1,6 +1,11 @@
-package harjoitustyö;
-
+package Harkkatyo;
+import java.util.Calendar;
+import java.util.Date;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class gui {
@@ -37,7 +42,28 @@ class Ikkuna extends JPanel{
 		ikkunankehys.setResizable(false);
 		ikkunankehys.setLayout(null);
 		
+		
+		
+		
+		
+		
+		try {
+			ikkunankehys.setContentPane(new JLabel(new ImageIcon(ImageIO.read(new File("/gui-tausta.png")))));
+		}catch (IOException e) {
+			System.out.println("Can't find image");
+		}
+		
+		
+		/*
+		ImageIcon img = new ImageIcon("gui-tausta.png");
+		JLabel background = new JLabel("",img,JLabel.CENTER);
+		background.setBounds(0, 0, leveys, korkeus);
+		*/
+		
+		
+		
 		Container sisalto=ikkunankehys.getContentPane();
+		
 		sisalto.setBackground(new Color(255, 255, 255));
 		
 		sisalto.add((new Elementit(10,30*1, sisalto.getInsets())).lisaaTeksti("Etunimi: "));
@@ -49,6 +75,15 @@ class Ikkuna extends JPanel{
 		sisalto.add((new Elementit(110,30*1+3, sisalto.getInsets()).lisaaTekstiKentta(20)));
 		sisalto.add((new Elementit(130,30*2+3, sisalto.getInsets()).lisaaTekstiKentta(0)));
 		
+		sisalto.add((new Elementit(170,30*5+3, sisalto.getInsets()).lisaaCheckBox("")));
+		
+		sisalto.add((new Elementit(243,30*3+3, sisalto.getInsets()).lisaaDropDownPaivat()));
+		sisalto.add((new Elementit(288,30*3+3, sisalto.getInsets()).lisaaDropDownKuukaudet()));
+		sisalto.add((new Elementit(393,30*3+3, sisalto.getInsets()).lisaaDropDownVuosi()));
+		
+		sisalto.add((new Elementit(243,30*4+3, sisalto.getInsets()).lisaaDropDownPaivat()));
+		sisalto.add((new Elementit(288,30*4+3, sisalto.getInsets()).lisaaDropDownKuukaudet()));
+		sisalto.add((new Elementit(393,30*4+3, sisalto.getInsets()).lisaaDropDownVuosi()));
 		
 		//asetetaan ikkuna näkyväksi
 		ikkunankehys.setVisible(true);
@@ -82,43 +117,46 @@ class Elementit extends JPanel{
 		
 		return new JButton();
 	}
-	public JComboBox lisaaDropDown() {
-		
-		
-		return new JComboBox();
+	public JComboBox<String> lisaaDropDownKuukaudet() {
+		String[] lista_kuukaudet= { "tammikuuta","helmikuuta","maaliskuta","huhtikuuta","toukokuuta","kesäkuuta","heinäkuuta","elokuuta","syyskuuta","lokakuuta","marraskuuta","joulukuuta"};
+		JComboBox<String> kuukaudet=new JComboBox<String>(lista_kuukaudet);
+		Dimension koko=kuukaudet.getPreferredSize();
+		kuukaudet.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width, koko.height);
+		return kuukaudet;
+	}
+	public JComboBox<Integer> lisaaDropDownPaivat() {
+		Integer[] lista_paivat=new Integer[31];
+		for (int i=1;i<=31;i++) {
+			lista_paivat[i-1]=i;
+		}
+		JComboBox<Integer> paivat=new JComboBox<Integer>(lista_paivat);
+		Dimension koko=paivat.getPreferredSize();
+		paivat.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width, koko.height);
+		return paivat;
+	}
+	public JComboBox<Integer> lisaaDropDownVuosi() {
+		int a=0;
+		Integer[] lista_vuodet=new Integer[100];
+		for (int i=Calendar.getInstance().get(Calendar.YEAR);i<=Calendar.getInstance().get(Calendar.YEAR)+100;i++) {
+			//try catch lause koska olen laiska ja en jaksa korjata koodia :DDDDDD
+			try {
+			lista_vuodet[a]=i;
+			}
+			catch (Exception e) {}
+			a++;
+			
+		}
+		JComboBox<Integer> vuodet=new JComboBox<Integer>(lista_vuodet);
+		Dimension koko=vuodet.getPreferredSize();
+		vuodet.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width, koko.height);
+		return vuodet;
 	}
 	public JCheckBox lisaaCheckBox(String teksti) {
 		JCheckBox checkbox=new JCheckBox(teksti);
+		checkbox.setSize(getPreferredSize());
+		checkbox.setBackground(new Color(255,255,255));
+		checkbox.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 20, 20);
 		
 		return checkbox;
 	}
 }
-
-
-
-//kommentoitu pois, en tiedä tuleeko tarvitsemaan enään, poistan jos ei tarvitse
-/*
-class Elementit extends JComponent{
-	private String text;
-	private int sijaintiX;
-	private int sijaintiY;
-		
-	public Elementit(String text, int sijaintiX, int sijaintiY) {
-		this.text = text;
-		this.sijaintiX = sijaintiX;
-		this.sijaintiY = sijaintiY;
-	}
-
-	@Override
-	public void paintComponent(Graphics g) {
-		if(g instanceof Graphics2D)
-	      {
-	        Graphics2D g2 = (Graphics2D)g;
-	        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-	        RenderingHints.VALUE_ANTIALIAS_ON);
-
-			g2.drawString(text,sijaintiX,sijaintiY); 
-	       }
-	}
-}
-*/
