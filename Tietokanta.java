@@ -25,7 +25,7 @@ public class Tietokanta{
 }
 
 class Tietokanta1 {
-	//private ArrayList<Varaus> varaukset;
+	private ArrayList<Varaus> varaukset;
 	private final String ohjain="org.sqlite.JDBC";
 	private final String url="jdbc:sqlite:Tietokanta.db";
 	
@@ -47,7 +47,12 @@ class Tietokanta1 {
 				String varaaja=rs.getString("varaaja");
 				Date varaus_alku=rs.getDate("varaus_alku");
 				Date varaus_loppu=rs.getDate("varaus_loppu");
-				int onko_luksus=rs.getInt("onko_luksus");
+				int ol=rs.getInt("onko_luksus");
+				boolean onko_luksus=false;
+				
+				if(ol==1) {
+					onko_luksus=true;
+				}
 				
 				
 				varaukset.add(new Varaus(varaus_nro,huone_id,varaaja,varaus_alku,varaus_loppu,onko_luksus));
@@ -92,7 +97,7 @@ class Tietokanta1 {
 	 * Metodi tarvitsee parametrina int-arvon huone_id
 	 * Metodi palauttaa ArrayList<Varaus>:n, jossa on kaikki kyseisen huoneen varaukset
 	 */
-	public ArrayList<Varaus>haeVaraukset(int huone_id){
+	public ArrayList<Varaus>haeVaraukset(int huone_id) throws SQLException{
 		
 		//Listan alustus
 		ArrayList<Varaus> lista=new ArrayList<Varaus>();
@@ -103,57 +108,25 @@ class Tietokanta1 {
 		//SQL-kutsun valmistelu
 		PreparedStatement lause=yhteys.prepareStatement("SELECT * FROM Varaukset WHERE hotelli_huone="+huone_id);
 		
-		//Kutsun suoritus
-		ResultSet rs=lause.executeQuery();
+		ResultSet rs=null;
 		
 		//Virheen k‰sittely
 		try {
+			//Kutsun suoritus
+			rs=lause.executeQuery();
 			
 			//Siirryt‰‰n ensimm‰iselle riville
-			rs.first();
-			
-			//Silmukassa haetaan tiedet jokaisesta huoneeseen kohdistuvasta varauksesta
-			while(!rs.isLast()) {
-				int varaus_nro=rs.getInt("varaus_nro");
-				String varaaja=rs.getString("varaaja");
-				Date varaus_alku=rs.getDate("varaus_alku");
-				Date varaus_loppu=rs.getDate("varaus_loppu");
-				int ol=rs.getInt("onko_luksus");
-				boolean onko_luksus=false;
-				
-				if(ol==1) {
-					onko_luksus=true;
-				}
-				
-				//Luodaan Varaus-olio yll‰olevista tiedoista
-				Varaus varaus=new Varaus(varaus_nro,varaaja,varaus_alku,varaus_loppu,onko_luksus);
-				
-				//Lis‰t‰‰n Varaus-olio listaan
-				lista.add(varaus);
-				
-				//Seuraava rivi tietokannassa
-				rs.next();
+			if(!rs.first()) {
+				throw new EiKyseistaHuonettaPoikkeus(huone_id);
 			}
 		}
-		
 		//Catch-lohko virhett‰ varten
 		catch(EiKyseistaHuonettaPoikkeus e) {
-			e.printstacktrace();
+			e.printStackTrace();
 		}
-		
-		return lista;
-	}
-	
-	public Varaus haeVaraus(int varaus_id) {
-		Connection yhteys=yhdistaTietokantaan();
-		PreparedStatement lause=yhteys.prepareStatement("SELECT * FROM Varaukset WHERE varaus_nro="+varaus_id);
-		ResultSet rs=lause.executeQuery();
-		
-		rs.first();
-		
-		Varaus varaus=null;
-		
-		try {
+			
+		//Silmukassa haetaan tiedet jokaisesta huoneeseen kohdistuvasta varauksesta
+		while(!rs.isLast()) {
 			int varaus_nro=rs.getInt("varaus_nro");
 			String varaaja=rs.getString("varaaja");
 			Date varaus_alku=rs.getDate("varaus_alku");
@@ -166,13 +139,52 @@ class Tietokanta1 {
 			}
 			
 			//Luodaan Varaus-olio yll‰olevista tiedoista
-			varaus=new Varaus(varaus_nro,varaaja,varaus_alku,varaus_loppu,onko_luksus);
+			Varaus varaus=new Varaus(varaus_nro,huone_id,varaaja,varaus_alku,varaus_loppu,onko_luksus);
+			
+			//Lis‰t‰‰n Varaus-olio listaan
+			lista.add(varaus);
+			
+			//Seuraava rivi tietokannassa
+			rs.next();
+		}
+		
+		return lista;
+	}
+	
+	public Varaus haeVaraus(int varaus_id) throws SQLException {
+		Connection yhteys=yhdistaTietokantaan();
+		PreparedStatement lause=yhteys.prepareStatement("SELECT * FROM Varaukset WHERE varaus_nro="+varaus_id);
+		
+		ResultSet rs=null;
+		
+		try {
+			rs=lause.executeQuery();
+			
+			if(!rs.first()) {
+				throw new EiKyseistaVaraustaPoikkeus();
+			}
 		}
 		
 		//Catch-lohko virhett‰ varten
 		catch(EiKyseistaVaraustaPoikkeus e) {
-			e.printstacktrace();
+			e.printStackTrace();
 		}
+		
+		Varaus varaus=null;
+		
+		int huone_id=rs.getInt("hotelli_huone");
+		String varaaja=rs.getString("varaaja");
+		Date varaus_alku=rs.getDate("varaus_alku");
+		Date varaus_loppu=rs.getDate("varaus_loppu");
+		int ol=rs.getInt("onko_luksus");
+		boolean onko_luksus=false;
+		
+		if(ol==1) {
+			onko_luksus=true;
+		}
+		
+		//Luodaan Varaus-olio yll‰olevista tiedoista
+		varaus=new Varaus(varaus_id,huone_id,varaaja,varaus_alku,varaus_loppu,onko_luksus);
 		
 		return varaus;
 	}
