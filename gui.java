@@ -10,7 +10,7 @@ import javax.swing.*;
 
 public class gui {
 	public static void main(String[] args) {
-		new Ikkuna(160*4, 400);
+		new Ikkuna(160*3, 300);
 	}
 }
 
@@ -48,7 +48,7 @@ class Ikkuna extends JPanel{
 		
 		
 		try {
-			ikkunankehys.setContentPane(new JLabel(new ImageIcon(ImageIO.read(new File("/gui-tausta.png")))));
+			ikkunankehys.setContentPane(new JLabel(new ImageIcon(ImageIO.read(new File("gui-tausta.jpg")))));
 		}catch (IOException e) {
 			System.out.println("Can't find image");
 		}
@@ -64,7 +64,8 @@ class Ikkuna extends JPanel{
 		
 		Container sisalto=ikkunankehys.getContentPane();
 		
-		sisalto.setBackground(new Color(255, 255, 255));
+		
+		//lisätään elementtejä: tekstit, tekstikentät, dropdownit, checkboxit
 		
 		sisalto.add((new Elementit(10,30*1, sisalto.getInsets())).lisaaTeksti("Etunimi: "));
 		sisalto.add((new Elementit(10,30*2, sisalto.getInsets()).lisaaTeksti("Sukunimi: ")));
@@ -72,10 +73,10 @@ class Ikkuna extends JPanel{
 		sisalto.add((new Elementit(10,30*4, sisalto.getInsets()).lisaaTeksti("Lopetuspäivämäärä: ")));
 		sisalto.add((new Elementit(10,30*5, sisalto.getInsets()).lisaaTeksti("Luksushuone ")));
 		
-		sisalto.add((new Elementit(110,30*1+3, sisalto.getInsets()).lisaaTekstiKentta(20)));
-		sisalto.add((new Elementit(130,30*2+3, sisalto.getInsets()).lisaaTekstiKentta(0)));
+		sisalto.add((new Elementit(243,30*1+3, sisalto.getInsets()).lisaaTekstiKentta(5)));
+		sisalto.add((new Elementit(243,30*2+3, sisalto.getInsets()).lisaaTekstiKentta(5)));
 		
-		sisalto.add((new Elementit(170,30*5+3, sisalto.getInsets()).lisaaCheckBox("")));
+		sisalto.add((new Elementit(170,30*5+8, sisalto.getInsets()).lisaaCheckBox("")));
 		
 		sisalto.add((new Elementit(243,30*3+3, sisalto.getInsets()).lisaaDropDownPaivat()));
 		sisalto.add((new Elementit(288,30*3+3, sisalto.getInsets()).lisaaDropDownKuukaudet()));
@@ -136,8 +137,8 @@ class Elementit extends JPanel{
 	}
 	public JComboBox<Integer> lisaaDropDownVuosi() {
 		int a=0;
-		Integer[] lista_vuodet=new Integer[100];
-		for (int i=Calendar.getInstance().get(Calendar.YEAR);i<=Calendar.getInstance().get(Calendar.YEAR)+100;i++) {
+		Integer[] lista_vuodet=new Integer[10];
+		for (int i=Calendar.getInstance().get(Calendar.YEAR);i<=Calendar.getInstance().get(Calendar.YEAR)+10;i++) {
 			//try catch lause koska olen laiska ja en jaksa korjata koodia :DDDDDD
 			try {
 			lista_vuodet[a]=i;
@@ -153,9 +154,10 @@ class Elementit extends JPanel{
 	}
 	public JCheckBox lisaaCheckBox(String teksti) {
 		JCheckBox checkbox=new JCheckBox(teksti);
-		checkbox.setSize(getPreferredSize());
-		checkbox.setBackground(new Color(255,255,255));
-		checkbox.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 20, 20);
+		Dimension koko=getPreferredSize();
+		//checkbox.setBackground(new Color(255,255,255));
+		checkbox.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.BLACK));
+		checkbox.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 13, 13);	
 		
 		return checkbox;
 	}
