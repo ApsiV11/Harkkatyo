@@ -12,33 +12,49 @@ import java.util.Date;
 /*Tietokanta-luokka k‰sittelee SQL-tietokannassa olevaa tietoa
  * Tietokanta-luokka sis‰lt‰‰ metodit varauksien hakemista ja k‰sittely‰ varten
  */
+public class Tietokanta{
+	public static void main(String[] args) {
+		try {
+			Tietokanta1 tk=new Tietokanta1();
+		}
+		catch(EiTietokantaaPoikkeus e) {
+			e.printStackTrace();
+		}
+	}
+}
 
-public class Tietokanta {
-	private ArrayList<Varaus> varaukset;
-	private final String tiedosto_nimi="varaukset.db";
+class Tietokanta1 {
+	//private ArrayList<Varaus> varaukset;
 	private final String ohjain="org.sqlite.JDBC";
-	private final String url="jdbc:sqlite:\\varaukset.db";
+	private final String url="jdbc:sqlite:Tietokanta.db";
 	
 	//Konstruktori
-	public Tietokanta() {
+	public Tietokanta1() throws EiTietokantaaPoikkeus {
 		boolean olemassa=onkoTietokantaa();
 		
 		if(!olemassa) {
 			throw new EiTietokantaaPoikkeus();
 		}
 		
-		Connection yhteys=yhdistaTietokantaan();
-		PreparedStatement lause=yhteys.prepareStatement("SELECT * FROM Varaukset");
-		ResultSet rs=lause.executeQuery();
-		while(rs.next()) {
-			int varaus_nro=rs.getInt("varaus_nro");
-			int huone_id=rs.getInt("hotelli_huone");
-			String varaaja=rs.getString("varaaja");
-			Date varaus_alku=rs.getDate("varaus_alku");
-			Date varaus_loppu=rs.getDate("varaus_loppu");
-			int onko_luksus=rs.getInt("onko_luksus");
-			
-			varaukset.add(new Varaus(varaus_nro,huone_id,varaaja,varaus_alku,varaus_loppu,onko_luksus));
+		try {
+			Connection yhteys=yhdistaTietokantaan();
+			PreparedStatement lause=yhteys.prepareStatement("SELECT * FROM Varaukset");
+			ResultSet rs=lause.executeQuery();
+			while(rs.next()) {
+				int varaus_nro=rs.getInt("varaus_nro");
+				int huone_id=rs.getInt("hotelli_huone");
+				String varaaja=rs.getString("varaaja");
+				Date varaus_alku=rs.getDate("varaus_alku");
+				Date varaus_loppu=rs.getDate("varaus_loppu");
+				int onko_luksus=rs.getInt("onko_luksus");
+				
+				
+				//varaukset.add(new Varaus(varaus_nro,huone_id,varaaja,varaus_alku,varaus_loppu,onko_luksus));
+				}
+			System.out.println("Suoritettu");
+			}
+		catch(SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	
