@@ -25,7 +25,7 @@ public class Tietokanta{
 }
 
 class Tietokanta1 {
-	//private ArrayList<Varaus> varaukset;
+	private ArrayList<Varaus> varaukset;
 	private final String ohjain="org.sqlite.JDBC";
 	private final String url="jdbc:sqlite:Tietokanta.db";
 	
@@ -50,7 +50,7 @@ class Tietokanta1 {
 				int onko_luksus=rs.getInt("onko_luksus");
 				
 				
-				//varaukset.add(new Varaus(varaus_nro,huone_id,varaaja,varaus_alku,varaus_loppu,onko_luksus));
+				varaukset.add(new Varaus(varaus_nro,huone_id,varaaja,varaus_alku,varaus_loppu,onko_luksus));
 				}
 			System.out.println("Suoritettu");
 			}
@@ -87,8 +87,57 @@ class Tietokanta1 {
 		}
 		return null;
 	}
+	
+	/* haeVaraukset(int huone_id)-metodi hakee varaukset huoneen numeron perusteella
+	 * Metodi tarvitsee parametrina int-arvon huone_id
+	 * Metodi palauttaa ArrayList<Varaus>:n, jossa on kaikki kyseisen huoneen varaukset
+	 */
+	public ArrayList<Varaus>haeVaraukset(int huone_id){
+		
+		//Listan alustus
+		ArrayList<Varaus> lista=new ArrayList<Varaus>();
+		
+		//Tietokantaan yhdistäminen
+		Connection yhteys=yhdistaTietokantaan();
+		
+		//SQL-kutsun valmistelu
+		PreparedStatement lause=yhteys.prepareStatement("SELECT * FROM Varaukset WHERE hotelli_huone="+huone_id);
+		
+		//Kutsun suoritus
+		ResultSet rs=lause.executeQuery();
+		
+		//Siirrytään ensimmäiselle riville
+		rs.first();
+		
+		//Silmukassa haetaan tiedet jokaisesta huoneeseen kohdistuvasta varauksesta
+		while(!rs.isLast()) {
+			int varaus_nro=rs.getInt("varaus_nro");
+			String varaaja=rs.getString("varaaja");
+			Date varaus_alku=rs.getDate("varaus_alku");
+			Date varaus_loppu=rs.getDate("varaus_loppu");
+			int ol=rs.getInt("onko_luksus");
+			boolean onko_luksus=false;
+			
+			if(ol==1) {
+				onko_luksus=true;
+			}
+			
+			//Luodaan Varaus-olio ylläolevista tiedoista
+			Varaus varaus=new Varaus(varaus_nro,varaaja,varaus_alku,varaus_loppu,onko_luksus);
+			
+			//Lisätään Varaus-olio listaan
+			lista.add(varaus);
+			
+			//Seuraava rivi tietokannassa
+			rs.next();
+		}
+		
+		
+		return lista;
+	}
 }
 
+//Poikkeusluokka sellaista tilannetta varten, jossa tietokanta-tiedostoa ei löydy
 class EiTietokantaaPoikkeus extends Exception{
 	/**
 	 * 
