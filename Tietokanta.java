@@ -25,7 +25,7 @@ public class Tietokanta{
 }
 
 class Tietokanta1 {
-	private ArrayList<Varaus> varaukset;
+	//private ArrayList<Varaus> varaukset;
 	private final String ohjain="org.sqlite.JDBC";
 	private final String url="jdbc:sqlite:Tietokanta.db";
 	
@@ -106,11 +106,54 @@ class Tietokanta1 {
 		//Kutsun suoritus
 		ResultSet rs=lause.executeQuery();
 		
-		//Siirryt‰‰n ensimm‰iselle riville
+		//Virheen k‰sittely
+		try {
+			
+			//Siirryt‰‰n ensimm‰iselle riville
+			rs.first();
+			
+			//Silmukassa haetaan tiedet jokaisesta huoneeseen kohdistuvasta varauksesta
+			while(!rs.isLast()) {
+				int varaus_nro=rs.getInt("varaus_nro");
+				String varaaja=rs.getString("varaaja");
+				Date varaus_alku=rs.getDate("varaus_alku");
+				Date varaus_loppu=rs.getDate("varaus_loppu");
+				int ol=rs.getInt("onko_luksus");
+				boolean onko_luksus=false;
+				
+				if(ol==1) {
+					onko_luksus=true;
+				}
+				
+				//Luodaan Varaus-olio yll‰olevista tiedoista
+				Varaus varaus=new Varaus(varaus_nro,varaaja,varaus_alku,varaus_loppu,onko_luksus);
+				
+				//Lis‰t‰‰n Varaus-olio listaan
+				lista.add(varaus);
+				
+				//Seuraava rivi tietokannassa
+				rs.next();
+			}
+		}
+		
+		//Catch-lohko virhett‰ varten
+		catch(EiKyseistaHuonettaPoikkeus e) {
+			e.printstacktrace();
+		}
+		
+		return lista;
+	}
+	
+	public Varaus haeVaraus(int varaus_id) {
+		Connection yhteys=yhdistaTietokantaan();
+		PreparedStatement lause=yhteys.prepareStatement("SELECT * FROM Varaukset WHERE varaus_nro="+varaus_id);
+		ResultSet rs=lause.executeQuery();
+		
 		rs.first();
 		
-		//Silmukassa haetaan tiedet jokaisesta huoneeseen kohdistuvasta varauksesta
-		while(!rs.isLast()) {
+		Varaus varaus=null;
+		
+		try {
 			int varaus_nro=rs.getInt("varaus_nro");
 			String varaaja=rs.getString("varaaja");
 			Date varaus_alku=rs.getDate("varaus_alku");
@@ -123,17 +166,15 @@ class Tietokanta1 {
 			}
 			
 			//Luodaan Varaus-olio yll‰olevista tiedoista
-			Varaus varaus=new Varaus(varaus_nro,varaaja,varaus_alku,varaus_loppu,onko_luksus);
-			
-			//Lis‰t‰‰n Varaus-olio listaan
-			lista.add(varaus);
-			
-			//Seuraava rivi tietokannassa
-			rs.next();
+			varaus=new Varaus(varaus_nro,varaaja,varaus_alku,varaus_loppu,onko_luksus);
 		}
 		
+		//Catch-lohko virhett‰ varten
+		catch(EiKyseistaVaraustaPoikkeus e) {
+			e.printstacktrace();
+		}
 		
-		return lista;
+		return varaus;
 	}
 }
 
