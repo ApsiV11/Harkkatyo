@@ -8,7 +8,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class gui {
+public class Kayttoliittyma {
 	public static void main(String[] args) {
 		new Ikkuna(160*3, 300);
 	}
