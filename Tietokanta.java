@@ -13,24 +13,14 @@ import java.util.Date;
 /*Tietokanta-luokka k‰sittelee SQL-tietokannassa olevaa tietoa
  * Tietokanta-luokka sis‰lt‰‰ metodit varauksien hakemista ja k‰sittely‰ varten
  */
-public class Tietokanta{
-	public static void main(String[] args) {
-		try {
-			Tietokanta1 tk=new Tietokanta1();
-		}
-		catch(EiTietokantaaPoikkeus e) {
-			e.printStackTrace();
-		}
-	}
-}
 
-class Tietokanta1 {
+public class Tietokanta {
 	private ArrayList<Varaus> varaukset;
 	private final String ohjain="org.sqlite.JDBC";
 	private final String url="jdbc:sqlite:Tietokanta.db";
 	
 	//Konstruktori
-	public Tietokanta1() throws EiTietokantaaPoikkeus {
+	public Tietokanta() throws EiTietokantaaPoikkeus {
 		boolean olemassa=onkoTietokantaa();
 		
 		if(!olemassa) {
@@ -75,7 +65,7 @@ class Tietokanta1 {
 	}
 	
 	//yhdistaTietokantaan()-metodi muodostaa yhteyden tietokantaan
-	private Connection yhdistaTietokantaan() {
+	public Connection yhdistaTietokantaan() {
 		try {
 			Class.forName(ohjain);
 			

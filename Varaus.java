@@ -19,6 +19,14 @@ public class Varaus {
 		this.onko_luksus=onko_luksus;
 	}
 	
+	public Varaus(int huone_id, String varaaja, Date aloitus_paiva, Date lopetus_paiva, boolean onko_luksus) {
+		this.huone_id=huone_id;
+		this.varaaja=varaaja;
+		this.aloitus_paiva=aloitus_paiva;
+		this.lopetus_paiva=lopetus_paiva;
+		this.onko_luksus=onko_luksus;
+	}
+	
 	
 	
 	public int getVaraus_id() {

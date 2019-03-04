@@ -2,6 +2,8 @@ package Harkkatyo;
 import java.util.Calendar;
 import java.util.Date;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -67,24 +69,67 @@ class Ikkuna extends JPanel{
 		
 		//lisätään elementtejä: tekstit, tekstikentät, dropdownit, checkboxit
 		
-		sisalto.add((new Elementit(10,30*1, sisalto.getInsets())).lisaaTeksti("Etunimi: "));
-		sisalto.add((new Elementit(10,30*2, sisalto.getInsets()).lisaaTeksti("Sukunimi: ")));
-		sisalto.add((new Elementit(10,30*3, sisalto.getInsets()).lisaaTeksti("Aloituspäivämäärä: ")));
-		sisalto.add((new Elementit(10,30*4, sisalto.getInsets()).lisaaTeksti("Lopetuspäivämäärä: ")));
-		sisalto.add((new Elementit(10,30*5, sisalto.getInsets()).lisaaTeksti("Luksushuone ")));
+		sisalto.add(new Elementit(10,30*1, sisalto.getInsets()).lisaaTeksti("Etunimi: "));
+		sisalto.add(new Elementit(10,30*2, sisalto.getInsets()).lisaaTeksti("Sukunimi: "));
+		sisalto.add(new Elementit(10,30*3, sisalto.getInsets()).lisaaTeksti("Aloituspäivämäärä: "));
+		sisalto.add(new Elementit(10,30*4, sisalto.getInsets()).lisaaTeksti("Lopetuspäivämäärä: "));
+		sisalto.add(new Elementit(10,30*5, sisalto.getInsets()).lisaaTeksti("Luksushuone "));
 		
-		sisalto.add((new Elementit(243,30*1+3, sisalto.getInsets()).lisaaTekstiKentta(5)));
-		sisalto.add((new Elementit(243,30*2+3, sisalto.getInsets()).lisaaTekstiKentta(5)));
+		JTextField enimi=new Elementit(243,30*1+3, sisalto.getInsets()).lisaaTekstiKentta(5);
+		JTextField snimi=new Elementit(243,30*2+3, sisalto.getInsets()).lisaaTekstiKentta(5);
 		
-		sisalto.add((new Elementit(170,30*5+8, sisalto.getInsets()).lisaaCheckBox("")));
+		sisalto.add(enimi);
+		sisalto.add(snimi);
 		
-		sisalto.add((new Elementit(243,30*3+3, sisalto.getInsets()).lisaaDropDownPaivat()));
-		sisalto.add((new Elementit(288,30*3+3, sisalto.getInsets()).lisaaDropDownKuukaudet()));
-		sisalto.add((new Elementit(393,30*3+3, sisalto.getInsets()).lisaaDropDownVuosi()));
+		JCheckBox checkbox=new Elementit(170,30*5+8, sisalto.getInsets()).lisaaCheckBox("");
 		
-		sisalto.add((new Elementit(243,30*4+3, sisalto.getInsets()).lisaaDropDownPaivat()));
-		sisalto.add((new Elementit(288,30*4+3, sisalto.getInsets()).lisaaDropDownKuukaudet()));
-		sisalto.add((new Elementit(393,30*4+3, sisalto.getInsets()).lisaaDropDownVuosi()));
+		sisalto.add(checkbox);
+		
+		JComboBox<Integer> dropPaivat=new Elementit(243,30*3+3, sisalto.getInsets()).lisaaDropDownPaivat();
+		JComboBox<String> dropKuukaudet=new Elementit(288,30*3+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
+		JComboBox<Integer> dropVuodet=new Elementit(393,30*3+3, sisalto.getInsets()).lisaaDropDownVuosi();
+		
+		sisalto.add(dropPaivat);
+		sisalto.add(dropKuukaudet);
+		sisalto.add(dropVuodet);
+		
+		JComboBox<Integer> dropPaivat2=new Elementit(243,30*4+3, sisalto.getInsets()).lisaaDropDownPaivat();
+		JComboBox<String> dropKuukaudet2=new Elementit(288,30*4+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
+		JComboBox<Integer> dropVuodet2=new Elementit(393,30*4+3, sisalto.getInsets()).lisaaDropDownVuosi();
+		
+		sisalto.add(dropPaivat2);
+		sisalto.add(dropKuukaudet2);
+		sisalto.add(dropVuodet2);
+		
+		
+		JButton nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Lähetä tiedot");
+		
+		//Lähetä-napin painallusta tarkkaileva metodi
+		nappi.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
+			public void actionPerformed(ActionEvent e){
+		    	  boolean oikeellisuus=tarkistaSisallot();
+		    	  
+		    	  if(oikeellisuus){
+		    		  //Implementoi metodi haeVapaat()-hotelli luokkaan
+		    		  //int huone_id=;
+		    		  String varaaja=enimi.getText()+" "+snimi.getText();
+		    		  Date aloitus_paiva=new Date(dropVuodet.getSelectedIndex(), dropKuukaudet.getSelectedIndex(), dropPaivat.getSelectedIndex());
+		    		  Date lopetus_paiva=new Date(dropVuodet2.getSelectedIndex(), dropKuukaudet2.getSelectedIndex(), dropPaivat2.getSelectedIndex());
+		    		  boolean onko_luksus=checkbox.isSelected();
+		    		  
+		    		  
+		    		  Varaus varaus=new Varaus(huone_id, varaaja, aloitus_paiva, lopetus_paiva, onko_luksus);
+		    		  
+		    		  varaus.tiedotTietokantaan();
+		    	  }
+		    	  else {
+		    		  //Uusi ikkuna, jossa lukee "tarkista tiedot"
+		    	  }
+		      }
+		});
+		
+		sisalto.add(nappi);
 		
 		//asetetaan ikkuna näkyväksi
 		ikkunankehys.setVisible(true);
@@ -111,12 +156,14 @@ class Elementit extends JPanel{
 	public JTextField lisaaTekstiKentta(int pituuden_tasaus) {
 		JTextField tekstikentta=new JTextField();
 		tekstikentta.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 200+pituuden_tasaus, 20);
+		
 		return tekstikentta;
 	}
-	public JButton lisaaNappi() {
+	public JButton lisaaNappi(String teksti) {
+		JButton nappi=new JButton(teksti);
+		nappi.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 120, 40);
 		
-		
-		return new JButton();
+		return nappi;
 	}
 	public JComboBox<String> lisaaDropDownKuukaudet() {
 		String[] lista_kuukaudet= { "tammikuuta","helmikuuta","maaliskuta","huhtikuuta","toukokuuta","kesäkuuta","heinäkuuta","elokuuta","syyskuuta","lokakuuta","marraskuuta","joulukuuta"};
