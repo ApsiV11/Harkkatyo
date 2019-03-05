@@ -10,21 +10,18 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class Kayttoliittyma {
-	public static void main(String[] args) {
-		new Ikkuna(160*3, 300);
-	}
-}
 
-class Ikkuna extends JPanel{
+public class Kayttoliittyma extends JPanel{
 	
 	//alustetaan attribuutit
+	private Hotelli hotelli;
 	private int leveys;
 	private int korkeus;
 	private JFrame ikkunankehys;
 
 	
-	public Ikkuna(int leveys, int korkeus) {
+	public Kayttoliittyma(int leveys, int korkeus, Hotelli hotelli) {
+		this.hotelli=hotelli;
 		this.leveys = leveys;
 		this.korkeus = korkeus;
 		
@@ -108,20 +105,21 @@ class Ikkuna extends JPanel{
 		nappi.addActionListener(new ActionListener() {
 			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e){
-		    	  boolean oikeellisuus=tarkistaSisallot();
+		    	  boolean oikeellisuus=true;//tarkistaSisallot();
 		    	  
 		    	  if(oikeellisuus){
-		    		  //Implementoi metodi haeVapaat()-hotelli luokkaan
-		    		  //int huone_id=;
+		    		  
+		    		  Date aloitus_paiva=new Date(dropVuodet.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet.getSelectedIndex(), dropPaivat.getSelectedIndex()+1);
+		    		  Date lopetus_paiva=new Date(dropVuodet2.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet2.getSelectedIndex(), dropPaivat2.getSelectedIndex()+1);
+		    		  
+		    		  int huone_id=hotelli.haeVapaat(checkbox.isSelected(),aloitus_paiva,lopetus_paiva).get(0).getNumero();
 		    		  String varaaja=enimi.getText()+" "+snimi.getText();
-		    		  Date aloitus_paiva=new Date(dropVuodet.getSelectedIndex(), dropKuukaudet.getSelectedIndex(), dropPaivat.getSelectedIndex());
-		    		  Date lopetus_paiva=new Date(dropVuodet2.getSelectedIndex(), dropKuukaudet2.getSelectedIndex(), dropPaivat2.getSelectedIndex());
 		    		  boolean onko_luksus=checkbox.isSelected();
 		    		  
 		    		  
 		    		  Varaus varaus=new Varaus(huone_id, varaaja, aloitus_paiva, lopetus_paiva, onko_luksus);
 		    		  
-		    		  varaus.tiedotTietokantaan();
+		    		  varaus.varausTietokantaan();
 		    	  }
 		    	  else {
 		    		  //Uusi ikkuna, jossa lukee "tarkista tiedot"

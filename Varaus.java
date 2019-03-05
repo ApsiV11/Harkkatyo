@@ -1,5 +1,10 @@
 package Harkkatyo;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Varaus {
@@ -25,6 +30,39 @@ public class Varaus {
 		this.aloitus_paiva=aloitus_paiva;
 		this.lopetus_paiva=lopetus_paiva;
 		this.onko_luksus=onko_luksus;
+	}
+	
+	public void varausTietokantaan() {
+		Tietokanta tk=null;
+		try {
+			tk=new Tietokanta();
+		} catch (EiTietokantaaPoikkeus e) {
+			e.printStackTrace();
+		}
+		
+		Connection yhteys=tk.yhdistaTietokantaan();
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
+		
+		
+		String alku=sdf.format(aloitus_paiva);
+		String loppu=sdf.format(lopetus_paiva);
+		int luksus=0;
+		
+		if(onko_luksus) {
+			luksus=1;
+		}
+		try {
+			
+			PreparedStatement lause=yhteys.prepareStatement("INSERT INTO Varaukset (hotelli_huone, varaaja, varaus_alku,"
+					+ "varaus_loppu, onko_luksus) VALUES ("+this.huone_id+", \""+this.varaaja+"\", \""+alku+"\", \""+loppu+"\", "+luksus+");");
+			lause.executeUpdate();
+			
+			System.out.println("Tiedot siirretty onnistuneesti");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -71,4 +109,3 @@ class EiKyseistaVaraustaPoikkeus extends Exception{
 		super("Ei kyseistä varausta");
 	}
 }
-
