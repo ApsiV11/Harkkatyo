@@ -1,4 +1,5 @@
 package Harkkatyo;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.awt.*;
@@ -112,14 +113,19 @@ public class Kayttoliittyma extends JPanel{
 		    		  Date aloitus_paiva=new Date(dropVuodet.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet.getSelectedIndex(), dropPaivat.getSelectedIndex()+1);
 		    		  Date lopetus_paiva=new Date(dropVuodet2.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet2.getSelectedIndex(), dropPaivat2.getSelectedIndex()+1);
 		    		  
-		    		  int huone_id=hotelli.haeVapaat(checkbox.isSelected(),aloitus_paiva,lopetus_paiva).get(0).getNumero();
-		    		  String varaaja=enimi.getText()+" "+snimi.getText();
-		    		  boolean onko_luksus=checkbox.isSelected();
-		    		  
-		    		  
-		    		  Varaus varaus=new Varaus(huone_id, varaaja, aloitus_paiva, lopetus_paiva, onko_luksus);
-		    		  
-		    		  varaus.varausTietokantaan();
+		    		  Huone huone=hotelli.haeVapaa(checkbox.isSelected(),aloitus_paiva,lopetus_paiva);
+		    		  if(huone==null) {
+		    			  //Hotelli on täynnä kyseisenä päivänä tässä kohtaa. Valitse uudet päivät
+		    		  }
+		    		  else{
+		    			  String varaaja=enimi.getText()+" "+snimi.getText();
+			    		  boolean onko_luksus=checkbox.isSelected();
+			    		  
+			    		  
+			    		  Varaus varaus=new Varaus(huone.getNumero(), varaaja, aloitus_paiva, lopetus_paiva, onko_luksus);
+			    		  
+			    		  varaus.varausTietokantaan();
+		    		  }
 		    	  }
 		    	  else {
 		    		  //Uusi ikkuna, jossa lukee "tarkista tiedot"

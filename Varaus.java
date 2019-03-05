@@ -59,6 +59,7 @@ public class Varaus {
 			lause.executeUpdate();
 			
 			System.out.println("Tiedot siirretty onnistuneesti");
+			yhteys.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

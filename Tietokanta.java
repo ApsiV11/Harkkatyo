@@ -54,6 +54,7 @@ public class Tietokanta {
 				varaukset.add(v);
 				}
 			System.out.println("Suoritettu");
+			yhteys.close();
 			}
 		catch(SQLException e) {
 			e.printStackTrace();
@@ -144,6 +145,7 @@ public class Tietokanta {
 			rs.next();
 		}
 		
+		yhteys.close();
 		return lista;
 	}
 	
@@ -182,6 +184,7 @@ public class Tietokanta {
 		//Luodaan Varaus-olio ylläolevista tiedoista
 		varaus=new Varaus(varaus_id,huone_id,varaaja,varaus_alku,varaus_loppu,onko_luksus);
 		
+		yhteys.close();
 		return varaus;
 	}
 }

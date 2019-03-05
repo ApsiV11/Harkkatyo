@@ -25,29 +25,29 @@ public class Hotelli {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public ArrayList<Huone> haeVapaat(boolean onko_luksus,Date aloitus_paiva,Date lopetus_paiva) {
-		ArrayList<Huone> huoneet=new ArrayList<Huone>();
+	public Huone haeVapaa(boolean onko_luksus,Date aloitus_paiva,Date lopetus_paiva) {
 		
 		Tietokanta tk=null;
 		try {
 			tk = new Tietokanta();
 		} catch (EiTietokantaaPoikkeus e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
 		Connection yhteys=tk.yhdistaTietokantaan();
 		
 		int i=0;
+		int max=huonemaara-luksushuoneet;
 		
 		if(onko_luksus) {
 			i=huonemaara-luksushuoneet;
+			max=huonemaara;
 		}
 		
 		ResultSet rs=null;
 		
 		//K‰yd‰‰n kaikki huoneet l‰pi
-		for(;i<huonemaara;i++) {
+		for(;i<max;i++) {
 			try {
 				//SQL-kysely, jolla pyydet‰‰n varauksia, joiden huoneen numero on sama kuin huonemaara-muuttuja
 				PreparedStatement lause=yhteys.prepareStatement("SELECT varaus_alku, varaus_loppu FROM Varaukset WHERE hotelli_huone="+i);
@@ -66,35 +66,45 @@ public class Hotelli {
 					int vavuosi=Integer.parseInt(varaus_alku.substring(0,4));
 					int vakuukausi=Integer.parseInt(varaus_alku.substring(5,7));
 					int vapaiva=Integer.parseInt(varaus_alku.substring(8,10));
-					Date alku=new Date(vavuosi,vakuukausi,vapaiva);
+					Date alku=new Date(vavuosi-1900,vakuukausi-1,vapaiva);
 					
 					String varaus_loppu=rs.getString("varaus_loppu");
 					int vlvuosi=Integer.parseInt(varaus_loppu.substring(0,4));
 					int vlkuukausi=Integer.parseInt(varaus_loppu.substring(5,7));
 					int vlpaiva=Integer.parseInt(varaus_loppu.substring(8,10));
-					Date loppu=new Date(vlvuosi,vlkuukausi,vlpaiva);
+					Date loppu=new Date(vlvuosi-1900,vlkuukausi-1,vlpaiva);
 					
 					//Alku ja loppu ovat vertailtavan varauksen p‰iv‰m‰‰ri‰
 					
+					System.out.println("Vanha varaus: "+alku.toString()+"-"+loppu.toString());
+					System.out.println();
+					System.out.println("Uusi varaus: "+aloitus_paiva.toString()+"-"+lopetus_paiva.toString());
+					
 					//Testataan ovatko varaukset limitt‰iset
-					if(!alku.after(lopetus_paiva) && !loppu.before(aloitus_paiva)) {
+					if(!(lopetus_paiva.before(alku) || aloitus_paiva.after(loppu))) {
 						kayko=false;
 						break;
 					}
+					System.out.println(kayko);
 					
 				}
 				
 				//Jos kayko-muuttuja on edelleen true, niin huone on vapaa
+				//Palautetaan ensimm‰inen vapaa huone
 				if(kayko) {
-					huoneet.add(new Huone(i,4));
+					yhteys.close();
+					return new Huone(i,4);
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
-		return huoneet;
+		try {
+			yhteys.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public int getHuonemaara() {
