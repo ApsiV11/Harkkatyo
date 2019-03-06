@@ -1,9 +1,11 @@
 package Harkkatyo;
 
 public class Huone {
+	//Attribuutit henkilöiden määrälle ja huoneen numerolle
 	private final int hmaara;
 	private final int numero;
 	
+	//Konstruktori
 	public Huone(int numero, int hmaara) {
 		this.hmaara=hmaara;
 		this.numero=numero;
@@ -34,6 +36,7 @@ class Luksushuone extends Huone{
 	}
 }
 
+//Virhe luokka sellaista tilannetta varten, jossa etsittävää huonetta ei löydy
 class EiKyseistaHuonettaPoikkeus extends Exception{
 	public EiKyseistaHuonettaPoikkeus(int huone_id) {
 		super("Ei kyseistä huonetta "+huone_id);

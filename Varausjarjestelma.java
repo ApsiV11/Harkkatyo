@@ -1,5 +1,7 @@
 package Harkkatyo;
 
+
+//Tämä on työn aloitusmetodi
 public class Varausjarjestelma {
 
 	public static void main(String[] args) {

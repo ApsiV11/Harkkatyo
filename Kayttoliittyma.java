@@ -20,7 +20,8 @@ public class Kayttoliittyma extends JPanel{
 	private int korkeus;
 	private JFrame ikkunankehys;
 
-	
+	//Konstruktori
+	//Parametreina käyttöliittymäikkunan leveys, korkeus ja Hotelli-olio
 	public Kayttoliittyma(int leveys, int korkeus, Hotelli hotelli) {
 		this.hotelli=hotelli;
 		this.leveys = leveys;
@@ -46,20 +47,12 @@ public class Kayttoliittyma extends JPanel{
 		
 		
 		
-		
+		//Virheenkäsittely kuvan puuttumista varten
 		try {
 			ikkunankehys.setContentPane(new JLabel(new ImageIcon(ImageIO.read(new File("gui-tausta.jpg")))));
 		}catch (IOException e) {
 			System.out.println("Can't find image");
 		}
-		
-		
-		/*
-		ImageIcon img = new ImageIcon("gui-tausta.png");
-		JLabel background = new JLabel("",img,JLabel.CENTER);
-		background.setBounds(0, 0, leveys, korkeus);
-		*/
-		
 		
 		
 		Container sisalto=ikkunankehys.getContentPane();
@@ -108,22 +101,29 @@ public class Kayttoliittyma extends JPanel{
 			public void actionPerformed(ActionEvent e){
 		    	  boolean oikeellisuus=true;//tarkistaSisallot();
 		    	  
+		    	  //Jos tiedot ovat kunnossa
 		    	  if(oikeellisuus){
 		    		  
+		    		  //Luodaan päivä-oliot vertailua varten
 		    		  Date aloitus_paiva=new Date(dropVuodet.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet.getSelectedIndex(), dropPaivat.getSelectedIndex()+1);
 		    		  Date lopetus_paiva=new Date(dropVuodet2.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet2.getSelectedIndex(), dropPaivat2.getSelectedIndex()+1);
 		    		  
+		    		  //Etsitään vapaat huoneet
 		    		  Huone huone=hotelli.haeVapaa(checkbox.isSelected(),aloitus_paiva,lopetus_paiva);
 		    		  if(huone==null) {
 		    			  //Hotelli on täynnä kyseisenä päivänä tässä kohtaa. Valitse uudet päivät
 		    		  }
+		    		  
+		    		  //Jos vapaa huone löytyy
 		    		  else{
+		    			  //Otetaan tiedot käyttöliittymästä
 		    			  String varaaja=enimi.getText()+" "+snimi.getText();
 			    		  boolean onko_luksus=checkbox.isSelected();
 			    		  
-			    		  
+			    		  //Luodaan Varaus-olio
 			    		  Varaus varaus=new Varaus(huone.getNumero(), varaaja, aloitus_paiva, lopetus_paiva, onko_luksus);
 			    		  
+			    		  //Lähetetään tiedot tietokantaan
 			    		  varaus.varausTietokantaan();
 		    		  }
 		    	  }
@@ -139,7 +139,13 @@ public class Kayttoliittyma extends JPanel{
 		ikkunankehys.setVisible(true);
 	}
 }
+
+//Elementti-luokka käyttöliittymää varten
 class Elementit extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int sijaintiX;
 	private int sijaintiY;
 	Insets koot;
@@ -149,26 +155,36 @@ class Elementit extends JPanel{
 		this.sijaintiY = sijaintiY;
 		this.koot=koot;
 	}
+	
+	//lisaaTeksti(String sisalto)-metodi lisää käyttöliittymään tekstiruudun
 	public JLabel lisaaTeksti(String sisalto) {
 		JLabel teksti=new JLabel(sisalto);
 		Dimension koko=teksti.getPreferredSize();
 		teksti.setSize(koko);
 		teksti.setBounds(sijaintiX+koot.left,sijaintiY+koot.top,koko.width+200,koko.height+10);
 		teksti.setFont(new Font("helvetica",Font.BOLD,24));
+		
 		return teksti;
 	}
+	
+	//lisaaTekstiKentta(int pituuden_tasaus)-metodi lisää tekstinsyöttökentän käyttöliittymään
 	public JTextField lisaaTekstiKentta(int pituuden_tasaus) {
 		JTextField tekstikentta=new JTextField();
 		tekstikentta.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 200+pituuden_tasaus, 20);
 		
 		return tekstikentta;
 	}
+	
+	//lisaaNappi(String teksti)-metodi lisää käyttöliittymään napin
+	//Napin painallus-funktio pitää implementoida erikseen
 	public JButton lisaaNappi(String teksti) {
 		JButton nappi=new JButton(teksti);
 		nappi.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 120, 40);
 		
 		return nappi;
 	}
+	
+	//lisaaDropDownKuukaudet()-metodi lisää käyttöliittymään kuukauden valinta listan
 	public JComboBox<String> lisaaDropDownKuukaudet() {
 		String[] lista_kuukaudet= { "tammikuuta","helmikuuta","maaliskuta","huhtikuuta","toukokuuta","kesäkuuta","heinäkuuta","elokuuta","syyskuuta","lokakuuta","marraskuuta","joulukuuta"};
 		JComboBox<String> kuukaudet=new JComboBox<String>(lista_kuukaudet);
@@ -176,6 +192,9 @@ class Elementit extends JPanel{
 		kuukaudet.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width, koko.height);
 		return kuukaudet;
 	}
+	
+	//lisaaDropDownPaivat()-metodi lisää käyttöliittymään paivan valinta listan
+	//Funktio ei ota huomioon, että kaikissa kuukauksissa ei ole 31 päivää, vaan päivämäärät tarkistetaan tietojen lähetyksen yhteydessä
 	public JComboBox<Integer> lisaaDropDownPaivat() {
 		Integer[] lista_paivat=new Integer[31];
 		for (int i=1;i<=31;i++) {
@@ -186,6 +205,9 @@ class Elementit extends JPanel{
 		paivat.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width, koko.height);
 		return paivat;
 	}
+	
+	//lisaaDropDownVuodet()-metodi lisää käyttöliittymään vuoden valinta listan
+	//Listassa on kymmenen seuraavaa vuotta
 	public JComboBox<Integer> lisaaDropDownVuosi() {
 		int a=0;
 		Integer[] lista_vuodet=new Integer[10];
@@ -203,6 +225,8 @@ class Elementit extends JPanel{
 		vuodet.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width, koko.height);
 		return vuodet;
 	}
+	
+	//lisaaCheckBox(String teksti)-metodi lisää käyttöliittymään valintaruudun
 	public JCheckBox lisaaCheckBox(String teksti) {
 		JCheckBox checkbox=new JCheckBox(teksti);
 		Dimension koko=getPreferredSize();

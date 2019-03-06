@@ -8,10 +8,14 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Hotelli {
+	
+	//Attribuutteja ovat huoneiden m‰‰r‰ ja luksushuoneiden m‰‰r‰ ja huonelista
 	private final int huonemaara;
 	private final int luksushuoneet;
 	private final ArrayList<Huone> huoneet=new ArrayList<Huone>();
 	
+	//Konstruktori saa parametrinaan huoneiden m‰‰r‰n ja luksushuoneiden m‰‰r‰n
+	//Perushuoneita on huonemaara-luksushuoneet ja Luksushuoneita luksushuoneet-parametrin maara
 	public Hotelli(int huonemaara, int luksushuoneet){
 		this.huonemaara=huonemaara;
 		this.luksushuoneet=luksushuoneet;
@@ -24,9 +28,13 @@ public class Hotelli {
 		}
 	}
 	
+	
+	//haeVapaa(boolean onko_luksus,Date aloitus_paiva,Date lopetus_paiva)-metodi hakee Hotelli-oliosta ensimm‰isen vapaan Huone-olion.
+	//Funktio palauttaa tyhj‰n Huone-olion, jos kaikki huoneet on varattu kyseisell‰ aikav‰lill‰
 	@SuppressWarnings("deprecation")
 	public Huone haeVapaa(boolean onko_luksus,Date aloitus_paiva,Date lopetus_paiva) {
 		
+		//Luodaan Tietokanta-olio tietokannan k‰yttˆ‰ varten
 		Tietokanta tk=null;
 		try {
 			tk = new Tietokanta();
@@ -34,8 +42,11 @@ public class Hotelli {
 			e1.printStackTrace();
 		}
 		
+		//Tietokantaan yhdistys
 		Connection yhteys=tk.yhdistaTietokantaan();
 		
+		//Aloituksen ja lopun asetus riippuen siit‰, haetaanko Luksushuoneita vai Perushuoneita
+		//Luksushuoneet ovat Hotelli-oliossa huoneet-listan lopussa, joten ensimm‰isen Luksushuone-olion indeksi on huonemaara-luksushuoneet
 		int i=0;
 		int max=huonemaara-luksushuoneet;
 		
@@ -44,6 +55,7 @@ public class Hotelli {
 			max=huonemaara;
 		}
 		
+		//ResultSet-olion alustus tietokannan antaman tuloksen k‰sittely‰ varten
 		ResultSet rs=null;
 		
 		//K‰yd‰‰n kaikki huoneet l‰pi
