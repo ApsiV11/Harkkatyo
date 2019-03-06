@@ -1,11 +1,9 @@
 package Harkkatyo;
 
-
 //Tämä on työn aloitusmetodi
 public class Varausjarjestelma {
 
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) {   
 		//Ensimmäinen parametri on huoneiden kokonaismäärä ja toinen luksushuoneiden määrä
 		Hotelli hotelli=new Hotelli(30, 6);
 		

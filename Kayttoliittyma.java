@@ -8,6 +8,9 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -28,6 +31,8 @@ public class Kayttoliittyma extends JPanel{
 	private UIManager UI;
 	private JButton lahetatiedot_nappi;
 	private JButton naytatiedot_nappi;
+	private JButton poistavaraus_nappi;
+	private JButton teevaraus_nappi;
 	
 	//Konstruktori
 	//Parametreina käyttöliittymäikkunan leveys, korkeus ja Hotelli-olio
@@ -59,7 +64,7 @@ public class Kayttoliittyma extends JPanel{
 		Container sisalto=ikkunankehys.getContentPane();
 		
 		
-		//lisätään elementtejä: tekstit, tekstikentät, dropdownit, checkboxit
+		//lisätään elementtejä: tekstit, tekstikentät, dropdownit, checkboxit, napit
 		
 		sisalto.add(new Elementit(10,30*1, sisalto.getInsets()).lisaaTeksti("Etunimi: "));
 		sisalto.add(new Elementit(10,30*2, sisalto.getInsets()).lisaaTeksti("Sukunimi: "));
@@ -96,6 +101,7 @@ public class Kayttoliittyma extends JPanel{
 		
 		lahetatiedot_nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Lähetä tiedot");
 		naytatiedot_nappi=new Elementit(180,30*6+25, sisalto.getInsets()).lisaaNappi("Näytä tiedot");
+		poistavaraus_nappi=new Elementit(30,30*6+25, sisalto.getInsets()).lisaaNappi("Poista varaus");
 		
 		//Lähetä-napin painallusta tarkkaileva metodi
 		lahetatiedot_nappi.addActionListener(new ActionListener() {
@@ -185,14 +191,30 @@ public class Kayttoliittyma extends JPanel{
 			
 		});
 		
+		naytatiedot_nappi.addActionListener(new ActionListener() {
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//IMPLEMENTOI VARAUKSEN POISTOIKKUNAAN VAIHTAMINEN
+			}
+			
+		});
+		
 		sisalto.add(lahetatiedot_nappi);
 		sisalto.add(naytatiedot_nappi);
+		sisalto.add(poistavaraus_nappi);
 		//asetetaan ikkuna näkyväksi
 		ikkunankehys.setVisible(true);
 	}
+	
+	//TarkistaSisallot()-metodi tutkii käyttöliittymän objektien sisällöt ja varmistaa, että ne ovat vaatimuksien mukaiset
+	//Etu ja sukunimen pitää olla 2 ja 16 merkin välillä ja alkupäivämäärän pitää olla ennen loppupäivämäärää
+	///Lisäksi päivämäärien tulee olla mahdolliset eli 30. helmikuuta ei käy.
+	//Päivämäärien pitää olla myös nykyisen päivän jälkeen
 	public boolean tarkistaSisallot() {
 		//tarkistetaan, että nimien pituus ei ole yli 32 merkkiä tai että nimi ei ole tyhjä merkkijono
-		if ((enimi.getText()).length()>=32 || (snimi.getText()).length()>=32 || (enimi.getText()).length()<2 || (snimi.getText()).length()<2){ 
+		if ((enimi.getText()).length()>=16 || (snimi.getText()).length()>=16 || (enimi.getText()).length()<2 || (snimi.getText()).length()<2){ 
 			virheviesti="Nimien pituus pitää olla 2 ja 16 välissä";
 			return false;
 		}
@@ -217,10 +239,25 @@ public class Kayttoliittyma extends JPanel{
 			virheviesti="Päivämäärät ei mahdollisia";
 			return false;
 		}
+		
 		//tarkistetaan, ettei lopetuspäivämäärä ole ennen aloituspäivämäärää
 		if (lopetusDate.after(aloitusDate)) {}
 		else {
 			virheviesti="Lopetuspäivämäärä on sama/ennen aloituspäivämäärää";
+			return false;
+		}
+		
+		//Nykyinen päivä 
+		LocalDateTime n = LocalDateTime.now();
+		n=n.minusDays(1);
+		
+		//Vähennetään nykyhetkestä yksi, että kuluvalle päivälle voi tehdä varauksen
+		Date nyt=java.sql.Timestamp.valueOf(n);
+		
+		//tarkistetaan, ettei aloituspäivämäärä ole ennen nykyhetkeä
+		if (aloitusDate.after(nyt)) {}
+		else {
+			virheviesti="Aloituspäivämäärä on ennen nykyhetkeä";
 			return false;
 		}
 		return true;

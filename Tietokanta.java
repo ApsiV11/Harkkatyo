@@ -19,7 +19,6 @@ public class Tietokanta {
 	
 	//Attribuutit tietokannan k‰sittely‰ varten
 
-	private ArrayList<Varaus> varaukset=new ArrayList<Varaus>();
 	private final String ohjain="org.sqlite.JDBC";
 	private final String url="jdbc:sqlite:Tietokanta.db";
 	
@@ -31,52 +30,6 @@ public class Tietokanta {
 		//Jos tietokantaa ei ole olemassa
 		if(!olemassa) {
 			throw new EiTietokantaaPoikkeus();
-		}
-		
-		try {
-			//Yhdistet‰‰n tietokantaan
-			Connection yhteys=yhdistaTietokantaan();
-			
-			//Valmistellaan kutsu
-			PreparedStatement lause=yhteys.prepareStatement("SELECT * FROM Varaukset");
-			
-			//Kutsun suorittaminen
-			ResultSet rs=lause.executeQuery();
-			
-			//K‰yd‰‰n l‰pi jokainen kutsun antama rivi
-			while(rs.next()) {
-				
-				//Haetaan arvot tietokannasta
-				int varaus_nro=rs.getInt("varaus_nro");
-				int huone_id=rs.getInt("hotelli_huone");
-				String varaaja=rs.getString("varaaja");
-				String varaus_alku=rs.getString("varaus_alku");
-				String varaus_loppu=rs.getString("varaus_loppu");
-				int ol=rs.getInt("onko_luksus");
-				boolean onko_luksus=false;
-				
-				//onko-luksus arvo booleaniksi. Tietokanta ei tue boolean arvoja
-				if(ol==1) {
-					onko_luksus=true;
-				}
-				
-				//Luodaan Date-oliot tietokannan tiedoista
-				Date aloitus_paiva=new Date(Integer.parseInt(varaus_alku.substring(0, 4)),Integer.parseInt(varaus_alku.substring(5, 7)),Integer.parseInt(varaus_alku.substring(8, 10)));
-				Date lopetus_paiva=new Date(Integer.parseInt(varaus_loppu.substring(0, 4)),Integer.parseInt(varaus_loppu.substring(5, 7)),Integer.parseInt(varaus_loppu.substring(8, 10)));
-				
-				//Varaus-olion luonti
-				Varaus v=new Varaus(varaus_nro,huone_id,varaaja,aloitus_paiva,lopetus_paiva,onko_luksus);
-				
-				//Lis‰t‰‰n Varaus palautettavaan listaan
-				varaukset.add(v);
-				}
-			System.out.println("Suoritettu");
-			
-			//Suljetaan yhteys tietokantaan
-			yhteys.close();
-			}
-		catch(SQLException e) {
-			e.printStackTrace();
 		}
 	}
 	
