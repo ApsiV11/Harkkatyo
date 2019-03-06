@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Hotelli {
-	
 	//Attribuutteja ovat huoneiden m‰‰r‰ ja luksushuoneiden m‰‰r‰ ja huonelista
 	private final int huonemaara;
 	private final int luksushuoneet;
@@ -47,6 +46,7 @@ public class Hotelli {
 		
 		//Aloituksen ja lopun asetus riippuen siit‰, haetaanko Luksushuoneita vai Perushuoneita
 		//Luksushuoneet ovat Hotelli-oliossa huoneet-listan lopussa, joten ensimm‰isen Luksushuone-olion indeksi on huonemaara-luksushuoneet
+
 		int i=0;
 		int max=huonemaara-luksushuoneet;
 		

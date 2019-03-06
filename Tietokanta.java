@@ -18,6 +18,7 @@ import java.util.Date;
 public class Tietokanta {
 	
 	//Attribuutit tietokannan käsittelyä varten
+
 	private ArrayList<Varaus> varaukset=new ArrayList<Varaus>();
 	private final String ohjain="org.sqlite.JDBC";
 	private final String url="jdbc:sqlite:Tietokanta.db";

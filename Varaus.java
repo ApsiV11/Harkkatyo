@@ -36,8 +36,7 @@ public class Varaus {
 	}
 	
 	//varausTietokantaan()-metodi vie kyseisen Varaus-olion tiedot tietokantaan
-	public void varausTietokantaan() {
-		
+	public void varausTietokantaan() {	
 		//Tietokanta olion luonti
 		Tietokanta tk=null;
 		try {
@@ -64,7 +63,6 @@ public class Varaus {
 			luksus=1;
 		}
 		try {
-			
 			//Luodaan SQL-komento
 			PreparedStatement lause=yhteys.prepareStatement("INSERT INTO Varaukset (hotelli_huone, varaaja, varaus_alku,"
 					+ "varaus_loppu, onko_luksus) VALUES ("+this.huone_id+", \""+this.varaaja+"\", \""+alku+"\", \""+loppu+"\", "+luksus+");");
