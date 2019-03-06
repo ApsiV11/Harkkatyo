@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /*Tietokanta-luokka käsittelee SQL-tietokannassa olevaa tietoa
@@ -15,11 +16,12 @@ import java.util.Date;
  */
 
 public class Tietokanta {
-	private ArrayList<Varaus> varaukset;
+	private ArrayList<Varaus> varaukset=new ArrayList<Varaus>();
 	private final String ohjain="org.sqlite.JDBC";
 	private final String url="jdbc:sqlite:Tietokanta.db";
 	
 	//Konstruktori
+	@SuppressWarnings("deprecation")
 	public Tietokanta() throws EiTietokantaaPoikkeus {
 		boolean olemassa=onkoTietokantaa();
 		
@@ -35,8 +37,8 @@ public class Tietokanta {
 				int varaus_nro=rs.getInt("varaus_nro");
 				int huone_id=rs.getInt("hotelli_huone");
 				String varaaja=rs.getString("varaaja");
-				Date varaus_alku=rs.getDate("varaus_alku");
-				Date varaus_loppu=rs.getDate("varaus_loppu");
+				String varaus_alku=rs.getString("varaus_alku");
+				String varaus_loppu=rs.getString("varaus_loppu");
 				int ol=rs.getInt("onko_luksus");
 				boolean onko_luksus=false;
 				
@@ -44,10 +46,15 @@ public class Tietokanta {
 					onko_luksus=true;
 				}
 				
+				Date aloitus_paiva=new Date(Integer.parseInt(varaus_alku.substring(0, 4)),Integer.parseInt(varaus_alku.substring(5, 7)),Integer.parseInt(varaus_alku.substring(8, 10)));
+				Date lopetus_paiva=new Date(Integer.parseInt(varaus_loppu.substring(0, 4)),Integer.parseInt(varaus_loppu.substring(5, 7)),Integer.parseInt(varaus_loppu.substring(8, 10)));
 				
-				varaukset.add(new Varaus(varaus_nro,huone_id,varaaja,varaus_alku,varaus_loppu,onko_luksus));
+				Varaus v=new Varaus(varaus_nro,huone_id,varaaja,aloitus_paiva,lopetus_paiva,onko_luksus);
+				
+				varaukset.add(v);
 				}
 			System.out.println("Suoritettu");
+			yhteys.close();
 			}
 		catch(SQLException e) {
 			e.printStackTrace();
@@ -138,6 +145,7 @@ public class Tietokanta {
 			rs.next();
 		}
 		
+		yhteys.close();
 		return lista;
 	}
 	
@@ -176,6 +184,7 @@ public class Tietokanta {
 		//Luodaan Varaus-olio ylläolevista tiedoista
 		varaus=new Varaus(varaus_id,huone_id,varaaja,varaus_alku,varaus_loppu,onko_luksus);
 		
+		yhteys.close();
 		return varaus;
 	}
 }

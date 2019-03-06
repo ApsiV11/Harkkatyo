@@ -6,63 +6,50 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-
+import java.text.SimpleDateFormat;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class Kayttoliittyma {
-	public static void main(String[] args) {
-		new Ikkuna(160*3, 300);
-	}
-}
 
-class Ikkuna extends JPanel{
+public class Kayttoliittyma extends JPanel{
 	
 	//alustetaan attribuutit
+	private Hotelli hotelli;
 	private int leveys;
 	private int korkeus;
 	private JFrame ikkunankehys;
-
 	
-	public Ikkuna(int leveys, int korkeus) {
+	private JTextField enimi, snimi;
+	private JComboBox<Integer> dropPaivat, dropVuodet, dropPaivat2, dropVuodet2;
+	private JComboBox<String> dropKuukaudet, dropKuukaudet2;
+	private JCheckBox luksushuone;
+	private String virheviesti;
+	private UIManager UI;
+	JButton lahetatiedot_nappi, naytatiedot_nappi;
+	
+	public Kayttoliittyma(int leveys, int korkeus, Hotelli hotelli) {
+		this.hotelli=hotelli;
 		this.leveys = leveys;
 		this.korkeus = korkeus;
-		
-		
+			
 		//luodaan uusi ikkuna
 		ikkunankehys=new JFrame();
-		
-		
+			
 		//asetetaan ikkunalle leveys, korkeus, oletussijainti, sulkemisoperaatio, otsikko, väri
-		
-		
 		
 		ikkunankehys.setSize(new Dimension(leveys, korkeus));
 		ikkunankehys.setLocationRelativeTo(null);
 		ikkunankehys.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		ikkunankehys.setTitle("Ajanvaraus");
+		ikkunankehys.setTitle("Huoneen varaus");
 		ikkunankehys.setResizable(false);
 		ikkunankehys.setLayout(null);
-		
-		
-		
-		
 		
 		
 		try {
 			ikkunankehys.setContentPane(new JLabel(new ImageIcon(ImageIO.read(new File("gui-tausta.jpg")))));
 		}catch (IOException e) {
-			System.out.println("Can't find image");
+			System.out.println("Ei löytynyt taustakuvaa");
 		}
-		
-		
-		/*
-		ImageIcon img = new ImageIcon("gui-tausta.png");
-		JLabel background = new JLabel("",img,JLabel.CENTER);
-		background.setBounds(0, 0, leveys, korkeus);
-		*/
-		
-		
 		
 		Container sisalto=ikkunankehys.getContentPane();
 		
@@ -75,67 +62,164 @@ class Ikkuna extends JPanel{
 		sisalto.add(new Elementit(10,30*4, sisalto.getInsets()).lisaaTeksti("Lopetuspäivämäärä: "));
 		sisalto.add(new Elementit(10,30*5, sisalto.getInsets()).lisaaTeksti("Luksushuone "));
 		
-		JTextField enimi=new Elementit(243,30*1+3, sisalto.getInsets()).lisaaTekstiKentta(5);
-		JTextField snimi=new Elementit(243,30*2+3, sisalto.getInsets()).lisaaTekstiKentta(5);
+		enimi=new Elementit(243,30*1+3, sisalto.getInsets()).lisaaTekstiKentta(5);
+		snimi=new Elementit(243,30*2+3, sisalto.getInsets()).lisaaTekstiKentta(5);
 		
 		sisalto.add(enimi);
 		sisalto.add(snimi);
 		
-		JCheckBox checkbox=new Elementit(170,30*5+8, sisalto.getInsets()).lisaaCheckBox("");
+		luksushuone=new Elementit(170,30*5+8, sisalto.getInsets()).lisaaCheckBox("");
 		
-		sisalto.add(checkbox);
+		sisalto.add(luksushuone);
 		
-		JComboBox<Integer> dropPaivat=new Elementit(243,30*3+3, sisalto.getInsets()).lisaaDropDownPaivat();
-		JComboBox<String> dropKuukaudet=new Elementit(288,30*3+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
-		JComboBox<Integer> dropVuodet=new Elementit(393,30*3+3, sisalto.getInsets()).lisaaDropDownVuosi();
+		dropPaivat=new Elementit(243,30*3+3, sisalto.getInsets()).lisaaDropDownPaivat();
+		dropKuukaudet=new Elementit(288,30*3+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
+		dropVuodet=new Elementit(393,30*3+3, sisalto.getInsets()).lisaaDropDownVuosi();
 		
 		sisalto.add(dropPaivat);
 		sisalto.add(dropKuukaudet);
 		sisalto.add(dropVuodet);
 		
-		JComboBox<Integer> dropPaivat2=new Elementit(243,30*4+3, sisalto.getInsets()).lisaaDropDownPaivat();
-		JComboBox<String> dropKuukaudet2=new Elementit(288,30*4+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
-		JComboBox<Integer> dropVuodet2=new Elementit(393,30*4+3, sisalto.getInsets()).lisaaDropDownVuosi();
+		dropPaivat2=new Elementit(243,30*4+3, sisalto.getInsets()).lisaaDropDownPaivat();
+		dropKuukaudet2=new Elementit(288,30*4+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
+		dropVuodet2=new Elementit(393,30*4+3, sisalto.getInsets()).lisaaDropDownVuosi();
 		
 		sisalto.add(dropPaivat2);
 		sisalto.add(dropKuukaudet2);
 		sisalto.add(dropVuodet2);
 		
 		
-		JButton nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Lähetä tiedot");
+		lahetatiedot_nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Lähetä tiedot");
+		naytatiedot_nappi=new Elementit(180,30*6+25, sisalto.getInsets()).lisaaNappi("Näytä tiedot");
 		
 		//Lähetä-napin painallusta tarkkaileva metodi
-		nappi.addActionListener(new ActionListener() {
-			@SuppressWarnings("deprecation")
+		lahetatiedot_nappi.addActionListener(new ActionListener() {
+			
+			@SuppressWarnings({ "deprecation", "static-access" })
 			public void actionPerformed(ActionEvent e){
+				
+	    		  UI=new UIManager();
+	    		  UI.put("OptionPane.background", new Color(255,20,147));
+	    		  UI.put("Panel.background", new Color(255,20,147));
+				
 		    	  boolean oikeellisuus=tarkistaSisallot();
-		    	  
+		    	 
 		    	  if(oikeellisuus){
-		    		  //Implementoi metodi haeVapaat()-hotelli luokkaan
-		    		  //int huone_id=;
-		    		  String varaaja=enimi.getText()+" "+snimi.getText();
-		    		  Date aloitus_paiva=new Date(dropVuodet.getSelectedIndex(), dropKuukaudet.getSelectedIndex(), dropPaivat.getSelectedIndex());
-		    		  Date lopetus_paiva=new Date(dropVuodet2.getSelectedIndex(), dropKuukaudet2.getSelectedIndex(), dropPaivat2.getSelectedIndex());
-		    		  boolean onko_luksus=checkbox.isSelected();
 		    		  
+		    		  Date aloitus_paiva=new Date(dropVuodet.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet.getSelectedIndex(), dropPaivat.getSelectedIndex()+1);
+		    		  Date lopetus_paiva=new Date(dropVuodet2.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet2.getSelectedIndex(), dropPaivat2.getSelectedIndex()+1);
 		    		  
-		    		  Varaus varaus=new Varaus(huone_id, varaaja, aloitus_paiva, lopetus_paiva, onko_luksus);
-		    		  
-		    		  varaus.tiedotTietokantaan();
+		    		  Huone huone=hotelli.haeVapaa(luksushuone.isSelected(),aloitus_paiva,lopetus_paiva);
+		    		  if(huone==null) {
+		    			  JOptionPane.showMessageDialog(ikkunankehys, "Hotelli on täynnä näinä päivinä, valitse uudet päivät", "Virhe", JOptionPane.ERROR_MESSAGE);
+		    		  }
+		    		  else{
+		    			  String varaaja=enimi.getText()+" "+snimi.getText();
+			    		  boolean onko_luksus=luksushuone.isSelected();
+			    		  
+			    		  
+			    		  Varaus varaus=new Varaus(huone.getNumero(), varaaja, aloitus_paiva, lopetus_paiva, onko_luksus);
+			    		  
+			    		  varaus.varausTietokantaan();
+			    		  
+			    		  JOptionPane.showMessageDialog(ikkunankehys, "Varaus tehtiin onnistuneesti","Onnistui!",JOptionPane.DEFAULT_OPTION);
+			    		  
+			    		  
+			    		  //tyhjentää elementit arvoistaan
+			    		  enimi.setText("");
+			    		  snimi.setText("");
+			    		  luksushuone.setSelected(false);
+			    		  dropPaivat.setSelectedIndex(0);
+			    		  dropKuukaudet.setSelectedIndex(0);
+			    		  dropVuodet.setSelectedIndex(0);
+			    		  dropPaivat2.setSelectedIndex(0);
+			    		  dropKuukaudet2.setSelectedIndex(0);
+			    		  dropVuodet2.setSelectedIndex(0);
+		    		  }
 		    	  }
 		    	  else {
-		    		  //Uusi ikkuna, jossa lukee "tarkista tiedot"
+
+			    	  JOptionPane.showMessageDialog(ikkunankehys,
+			    			    virheviesti,
+			    			    "Virhe",
+			    			    JOptionPane.ERROR_MESSAGE);
+
 		    	  }
 		      }
 		});
 		
-		sisalto.add(nappi);
+		naytatiedot_nappi.addActionListener(new ActionListener() {
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//piilotetaan vanhat elementit
+				enimi.hide();
+	    		snimi.hide();
+	    		luksushuone.hide();
+	    		dropPaivat.hide();
+	    		dropKuukaudet.hide();
+	    		dropVuodet.hide();
+	    		dropPaivat2.hide();
+	    		dropKuukaudet2.hide();
+	    		dropVuodet2.hide();
+	    		
+	    		
+	    		//lisätään teksti paikoilleen
+	    		JLabel etunimi=new Elementit(243,30*1+3, sisalto.getInsets()).lisaaTeksti("");
+	    		JLabel sukunimi=new Elementit(243,30*1+3, sisalto.getInsets()).lisaaTeksti("");
+	    		
+				
+			}
+			
+		});
 		
+		sisalto.add(lahetatiedot_nappi);
+		sisalto.add(naytatiedot_nappi);
 		//asetetaan ikkuna näkyväksi
 		ikkunankehys.setVisible(true);
 	}
+	public boolean tarkistaSisallot() {
+		//tarkistetaan, että nimien pituus ei ole yli 32 merkkiä tai että nimi ei ole tyhjä merkkijono
+		if ((enimi.getText()).length()>=32 || (snimi.getText()).length()>=32 || (enimi.getText()).length()<2 || (snimi.getText()).length()<2){ 
+			virheviesti="Nimien pituus pitää olla 2 ja 16 välissä";
+			return false;
+		}
+		
+		//parsitaan päivämäärät "dd-MM-yyyy" -muotoon
+		
+		String aloituspvm=String.valueOf(dropPaivat.getSelectedIndex()+1)+"-"+String.valueOf(dropKuukaudet.getSelectedIndex()+1)+"-"+String.valueOf(dropVuodet.getSelectedItem());
+		String lopetuspvm=String.valueOf(dropPaivat2.getSelectedIndex()+1)+"-"+String.valueOf(dropKuukaudet2.getSelectedIndex()+1)+"-"+String.valueOf(dropVuodet2.getSelectedItem());
+		
+		Date aloitusDate=null;
+		Date lopetusDate=null;
+
+	
+		//muutetaan päivämäärät Date -olioiksi, ja samalla tarkastetaan onko ne mahdollisia
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		sdf.setLenient(false);
+		try {
+			aloitusDate=sdf.parse(aloituspvm);
+			lopetusDate=sdf.parse(lopetuspvm);
+		}
+		catch(Exception e) {
+			virheviesti="Päivämäärät ei mahdollisia";
+			return false;
+		}
+		//tarkistetaan, ettei lopetuspäivämäärä ole ennen aloituspäivämäärää
+		if (lopetusDate.after(aloitusDate)) {}
+		else {
+			virheviesti="Lopetuspäivämäärä on sama/ennen aloituspäivämäärää";
+			return false;
+		}
+		return true;
+	}
 }
 class Elementit extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int sijaintiX;
 	private int sijaintiY;
 	Insets koot;
@@ -200,12 +284,12 @@ class Elementit extends JPanel{
 		return vuodet;
 	}
 	public JCheckBox lisaaCheckBox(String teksti) {
-		JCheckBox checkbox=new JCheckBox(teksti);
+		JCheckBox luksushuone=new JCheckBox(teksti);
 		Dimension koko=getPreferredSize();
-		//checkbox.setBackground(new Color(255,255,255));
-		checkbox.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.BLACK));
-		checkbox.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 13, 13);	
+		//luksushuone.setBackground(new Color(255,255,255));
+		luksushuone.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.BLACK));
+		luksushuone.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 13, 13);	
 		
-		return checkbox;
+		return luksushuone;
 	}
 }
