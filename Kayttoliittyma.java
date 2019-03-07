@@ -258,14 +258,15 @@ public class Kayttoliittyma extends JPanel{
 		//tarkistetaan, ettei aloituspäivämäärä ole ennen nykyhetkeä
 		if (aloitusDate.after(nyt)) {}
 		else {
-			virheviesti="Varauksen alku on ennen nykyhetkeä";
+			virheviesti="Vanhentunut päivämäärä, et voi tehdä varausta menneisyyteen";
 			return false;
 		}
 		return true;
 	}
 }
 
-//Elementti-luokka käyttöliittymää varten
+//Elementit-luokka käyttöliittymää varten
+//Elementit-luokalla luodaan kaikki objektit käyttöliittymään
 class Elementit extends JPanel{
 	/**
 	 * 

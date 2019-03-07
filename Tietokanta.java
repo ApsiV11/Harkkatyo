@@ -109,8 +109,8 @@ public class Tietokanta {
 			}
 			
 			//Date-olioiden luonti
-			Date aloitus_paiva=new Date(Integer.parseInt(varaus_alku.substring(0, 4)),Integer.parseInt(varaus_alku.substring(5, 7)),Integer.parseInt(varaus_alku.substring(8, 10)));
-			Date lopetus_paiva=new Date(Integer.parseInt(varaus_loppu.substring(0, 4)),Integer.parseInt(varaus_loppu.substring(5, 7)),Integer.parseInt(varaus_loppu.substring(8, 10)));
+			Date aloitus_paiva=new Date(Integer.parseInt(varaus_alku.substring(6, 10)),Integer.parseInt(varaus_alku.substring(3, 5)),Integer.parseInt(varaus_alku.substring(0, 2)));
+			Date lopetus_paiva=new Date(Integer.parseInt(varaus_loppu.substring(6, 10)),Integer.parseInt(varaus_loppu.substring(3, 5)),Integer.parseInt(varaus_loppu.substring(0, 2)));
 			
 			//Luodaan Varaus-olio ylläolevista tiedoista
 			Varaus varaus=new Varaus(varaus_nro,huone_id,varaaja,aloitus_paiva,lopetus_paiva,onko_luksus);
@@ -167,8 +167,8 @@ public class Tietokanta {
 		}
 		
 		//Date-olioiden luonti
-		Date aloitus_paiva=new Date(Integer.parseInt(varaus_alku.substring(0, 4)),Integer.parseInt(varaus_alku.substring(5, 7)),Integer.parseInt(varaus_alku.substring(8, 10)));
-		Date lopetus_paiva=new Date(Integer.parseInt(varaus_loppu.substring(0, 4)),Integer.parseInt(varaus_loppu.substring(5, 7)),Integer.parseInt(varaus_loppu.substring(8, 10)));
+		Date aloitus_paiva=new Date(Integer.parseInt(varaus_alku.substring(6, 10)),Integer.parseInt(varaus_alku.substring(3, 5)),Integer.parseInt(varaus_alku.substring(0, 2)));
+		Date lopetus_paiva=new Date(Integer.parseInt(varaus_loppu.substring(6, 10)),Integer.parseInt(varaus_loppu.substring(3, 5)),Integer.parseInt(varaus_loppu.substring(0, 2)));
 		
 		//Luodaan Varaus-olio ylläolevista tiedoista
 		Varaus varaus=new Varaus(huone_id,varaaja,aloitus_paiva,lopetus_paiva,onko_luksus);

@@ -75,15 +75,15 @@ public class Hotelli {
 					
 					//Luodaan päivämäärät tietokannan tiedoista
 					String varaus_alku=rs.getString("varaus_alku");
-					int vavuosi=Integer.parseInt(varaus_alku.substring(0,4));
-					int vakuukausi=Integer.parseInt(varaus_alku.substring(5,7));
-					int vapaiva=Integer.parseInt(varaus_alku.substring(8,10));
+					int vavuosi=Integer.parseInt(varaus_alku.substring(6,10));
+					int vakuukausi=Integer.parseInt(varaus_alku.substring(3,5));
+					int vapaiva=Integer.parseInt(varaus_alku.substring(0,2));
 					Date alku=new Date(vavuosi-1900,vakuukausi-1,vapaiva);
 					
 					String varaus_loppu=rs.getString("varaus_loppu");
-					int vlvuosi=Integer.parseInt(varaus_loppu.substring(0,4));
-					int vlkuukausi=Integer.parseInt(varaus_loppu.substring(5,7));
-					int vlpaiva=Integer.parseInt(varaus_loppu.substring(8,10));
+					int vlvuosi=Integer.parseInt(varaus_loppu.substring(6,10));
+					int vlkuukausi=Integer.parseInt(varaus_loppu.substring(3,5));
+					int vlpaiva=Integer.parseInt(varaus_loppu.substring(0,2));
 					Date loppu=new Date(vlvuosi-1900,vlkuukausi-1,vlpaiva);
 					
 					//Alku ja loppu ovat vertailtavan varauksen päivämääriä

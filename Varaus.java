@@ -50,7 +50,7 @@ public class Varaus {
 		
 		//Luodaan SimpleDateFormat-olio p‰iv‰m‰‰rien muotoilua varten
 		//P‰iv‰m‰‰r‰t tallennetaan numeroina vuosi ensin
-		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
+		SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-YYYY");
 		
 		//Muotoillaan String-oliot paiv‰m‰‰rist‰
 		String alku=sdf.format(aloitus_paiva);
