@@ -303,6 +303,8 @@ public class Kayttoliittyma extends JPanel{
 						tk.poistaVaraus(numero);
 						
 						lisaaDialogi(ikkunankehys, "Varaus peruutettiin onnistuneesti","Onnistui!",JOptionPane.DEFAULT_OPTION);
+						
+						tyhjennaKentat();
 					}
 					
 					//Virheen käsittely
@@ -370,6 +372,7 @@ public class Kayttoliittyma extends JPanel{
 	public void tyhjennaKentat() {
 		  enimi.setText("");
 		  snimi.setText("");
+		  vnumero.setText("");
 		  luksushuone.setSelected(false);
 		  dropPaivat.setSelectedIndex(0);
  		  dropKuukaudet.setSelectedIndex(0);
