@@ -40,7 +40,7 @@ public class Kayttoliittyma extends JPanel{
 	
 	//Konstruktori
 	//Parametreina käyttöliittymäikkunan leveys, korkeus ja Hotelli-olio
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "static-access" })
 	public Kayttoliittyma(int leveys, int korkeus, Hotelli hotelli) {
 		this.hotelli=hotelli;
 		this.leveys = leveys;
@@ -68,6 +68,10 @@ public class Kayttoliittyma extends JPanel{
 		
 		Container sisalto=ikkunankehys.getContentPane();
 		
+		UI=new UIManager();
+		UI.put("OptionPane.background", new Color(255,20,147));
+		UI.put("Panel.background", new Color(255,20,147));
+		
 		varaaminen=new Elementit(0, 0, sisalto.getInsets()).lisaaPaneeli(leveys, korkeus);
 		tiedot=new Elementit(0, 0, sisalto.getInsets()).lisaaPaneeli(leveys, korkeus);
 		peruutus=new Elementit(0, 0, sisalto.getInsets()).lisaaPaneeli(leveys, korkeus);
@@ -85,8 +89,8 @@ public class Kayttoliittyma extends JPanel{
 		varaaminen.add(lpvm_teksti);
 		varaaminen.add(lh_teksti);
 		
-		enimi=new Elementit(223,30*1+3, sisalto.getInsets()).lisaaTekstiKentta(5);
-		snimi=new Elementit(223,30*2+3, sisalto.getInsets()).lisaaTekstiKentta(5);
+		enimi=new Elementit(223,30*1+3, sisalto.getInsets()).lisaaTekstiKentta(18);
+		snimi=new Elementit(223,30*2+3, sisalto.getInsets()).lisaaTekstiKentta(18);
 		
 		varaaminen.add(enimi);
 		varaaminen.add(snimi);
@@ -96,35 +100,31 @@ public class Kayttoliittyma extends JPanel{
 		varaaminen.add(luksushuone);
 		
 		dropPaivat=new Elementit(223,30*3+3, sisalto.getInsets()).lisaaDropDownPaivat();
-		dropKuukaudet=new Elementit(268,30*3+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
-		dropVuodet=new Elementit(373,30*3+3, sisalto.getInsets()).lisaaDropDownVuosi();
+		dropKuukaudet=new Elementit(270,30*3+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
+		dropVuodet=new Elementit(380,30*3+3, sisalto.getInsets()).lisaaDropDownVuosi();
 		
 		varaaminen.add(dropPaivat);
 		varaaminen.add(dropKuukaudet);
 		varaaminen.add(dropVuodet);
 		
 		dropPaivat2=new Elementit(223,30*4+3, sisalto.getInsets()).lisaaDropDownPaivat();
-		dropKuukaudet2=new Elementit(268,30*4+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
-		dropVuodet2=new Elementit(373,30*4+3, sisalto.getInsets()).lisaaDropDownVuosi();
+		dropKuukaudet2=new Elementit(270,30*4+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
+		dropVuodet2=new Elementit(380,30*4+3, sisalto.getInsets()).lisaaDropDownVuosi();
 		
 		varaaminen.add(dropPaivat2);
 		varaaminen.add(dropKuukaudet2);
 		varaaminen.add(dropVuodet2);
 		
-		takaisin_nappi=new Elementit(180,30*6+25, sisalto.getInsets()).lisaaNappi("Takaisin");
-		lahetatiedot_nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Lähetä tiedot");
-		naytatiedot_nappi=new Elementit(180,30*6+25, sisalto.getInsets()).lisaaNappi("Näytä tiedot");
-		peruutavaraus_nappi=new Elementit(30,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta varaus");
+		takaisin_nappi=new Elementit(60,30*6+25, sisalto.getInsets()).lisaaNappi("Takaisin", Color.PINK);
+		lahetatiedot_nappi=new Elementit(300,30*6+25, sisalto.getInsets()).lisaaNappi("Lähetä tiedot", Color.GREEN);
+		naytatiedot_nappi=new Elementit(300,30*6+25, sisalto.getInsets()).lisaaNappi("Näytä tiedot", Color.GREEN);
+		peruutavaraus_nappi=new Elementit(60,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta varaus", Color.PINK);
 		
 		//Lähetä-napin painallusta tarkkaileva metodi
 		lahetatiedot_nappi.addActionListener(new ActionListener() {
 			
 			@SuppressWarnings({ "deprecation", "static-access" })
 			public void actionPerformed(ActionEvent e){
-				UI=new UIManager();
-				UI.put("OptionPane.background", new Color(255,20,147));
-				UI.put("Panel.background", new Color(255,20,147));
-				
 				boolean oikeellisuus=tarkistaSisallot();
 		    	 
 				//Jos tiedot ovat kunnossa
@@ -136,7 +136,7 @@ public class Kayttoliittyma extends JPanel{
 					//Etsitään vapaat huoneet
 			   		Huone huone=hotelli.haeVapaa(luksushuone.isSelected(),aloitus_paiva,lopetus_paiva);
 			   		if(huone==null) {
-			   			JOptionPane.showMessageDialog(ikkunankehys, "Hotelli on täynnä valitsemallasi aikavälillä, valitse uudet päivät", "Hotelli on täynnä", JOptionPane.ERROR_MESSAGE);
+			   			lisaaDialogi(ikkunankehys, "Hotelli on täynnä valitsemallasi aikavälillä, valitse uudet päivät", "Hotelli on täynnä", JOptionPane.ERROR_MESSAGE);
 			   			}		    		  
 			   		//Jos vapaa huone löytyy
 		    		else{
@@ -150,17 +150,14 @@ public class Kayttoliittyma extends JPanel{
 			    		//Lähetetään tiedot tietokantaan
 			    		varaus.varausTietokantaan();
 			    		  
-			    		JOptionPane.showMessageDialog(ikkunankehys, "Varaus tehtiin onnistuneesti","Onnistui!",JOptionPane.DEFAULT_OPTION);
+			    		lisaaDialogi(ikkunankehys, "Varaus tehtiin onnistuneesti","Onnistui!",JOptionPane.DEFAULT_OPTION);
 			    		
 			    		//tyhjentää elementit arvoistaan
 			    		tyhjennaKentat();
 						}
 			   		}
 				else {
-					JOptionPane.showMessageDialog(ikkunankehys, 
-							virheviesti,
-							"Virhe",
-			    			JOptionPane.ERROR_MESSAGE);
+					lisaaDialogi(ikkunankehys, virheviesti, "Virhe", JOptionPane.ERROR_MESSAGE);
 			    	  }
 				}
 			});
@@ -201,15 +198,8 @@ public class Kayttoliittyma extends JPanel{
 				//Objektien päivittäminen tiedot-ikkunaan loppuu
 	    		
 			}else {
-
-		    	  JOptionPane.showMessageDialog(ikkunankehys,
-		    			    virheviesti,
-		    			    "Virhe",
-		    			    JOptionPane.ERROR_MESSAGE);
-
+		    	  lisaaDialogi(ikkunankehys, virheviesti, "Virhe", JOptionPane.ERROR_MESSAGE);
 	    	  }
-				
-			
 			}
 			
 		});
@@ -234,14 +224,14 @@ public class Kayttoliittyma extends JPanel{
 		//Objektien laittaminen varaamis-ikkunaan loppuu
 		
 		//Objektit peruutus-ikkunaan
-		vn_teksti=new Elementit(150,30*2, sisalto.getInsets()).lisaaTeksti("Varausnumero: ");
+		vn_teksti=new Elementit(160,30*2, sisalto.getInsets()).lisaaTeksti("Varausnumero: ");
 		peruutus.add(vn_teksti);
 		
-		vnumero=new Elementit(150,30*3+3, sisalto.getInsets()).lisaaTekstiKentta(-24);
+		vnumero=new Elementit(160,30*3, sisalto.getInsets()).lisaaTekstiKentta(-40);
 		peruutus.add(vnumero);
 		
-		teevaraus_nappi=new Elementit(30,30*6+25, sisalto.getInsets()).lisaaNappi("Tee varaus");
-		peruuta_nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta");
+		teevaraus_nappi=new Elementit(30,30*6+25, sisalto.getInsets()).lisaaNappi("Tee varaus", Color.PINK);
+		peruuta_nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta varaus", Color.GREEN);
 		
 		teevaraus_nappi.addActionListener(new ActionListener() {
 
@@ -297,10 +287,7 @@ public class Kayttoliittyma extends JPanel{
 				}
 				catch (NumberFormatException e1) {
 					virheviesti="Syötä numero";
-					JOptionPane.showMessageDialog(ikkunankehys,
-		    			    virheviesti,
-		    			    "Virhe",
-		    			    JOptionPane.ERROR_MESSAGE);
+					lisaaDialogi(ikkunankehys, virheviesti, "Virhe", JOptionPane.ERROR_MESSAGE);
 				}
 				
 				//Jos varaus-id on käyttökelpoinen
@@ -315,7 +302,7 @@ public class Kayttoliittyma extends JPanel{
 						//Varauksen poisto
 						tk.poistaVaraus(numero);
 						
-						JOptionPane.showMessageDialog(ikkunankehys, "Varaus peruutettiin onnistuneesti","Onnistui!",JOptionPane.DEFAULT_OPTION);
+						lisaaDialogi(ikkunankehys, "Varaus peruutettiin onnistuneesti","Onnistui!",JOptionPane.DEFAULT_OPTION);
 					}
 					
 					//Virheen käsittely
@@ -323,10 +310,7 @@ public class Kayttoliittyma extends JPanel{
 						virheviesti="Varausta ei löytynyt";
 						
 						//Virheviestin luonto
-						JOptionPane.showMessageDialog(ikkunankehys,
-			    			    virheviesti,
-			    			    "Virhe",
-			    			    JOptionPane.ERROR_MESSAGE);
+						lisaaDialogi(ikkunankehys,virheviesti, "Virhe", JOptionPane.ERROR_MESSAGE);
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -452,6 +436,14 @@ public class Kayttoliittyma extends JPanel{
 		}
 		return true;
 	}
+	
+	//lisaaDialogi(String teksti, Container ikkunankehys, int value) palauttaa uuden ilmoitus olion
+		public void lisaaDialogi(Container ikkunankehys, String teksti, String nimi, int value) {
+			JLabel viesti=new JLabel(teksti);
+			viesti.setFont(new Font("Verdana", Font.BOLD, 14));
+			
+			JOptionPane.showMessageDialog(ikkunankehys, viesti, nimi, value);
+		}
 }
 
 //Elementit-luokka käyttöliittymää varten
@@ -485,16 +477,20 @@ class Elementit extends JPanel{
 	//lisaaTekstiKentta(int pituuden_tasaus)-metodi lisää tekstinsyöttökentän käyttöliittymään
 	public JTextField lisaaTekstiKentta(int pituuden_tasaus) {
 		JTextField tekstikentta=new JTextField();
-		tekstikentta.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 200+pituuden_tasaus, 20);
+		tekstikentta.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 200+pituuden_tasaus, 25);
+		tekstikentta.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
 		
 		return tekstikentta;
 	}
 	
 	//lisaaNappi(String teksti)-metodi lisää käyttöliittymään napin
 	//Napin painallus-funktio pitää implementoida erikseen
-	public JButton lisaaNappi(String teksti) {
+	public JButton lisaaNappi(String teksti, Color c) {
 		JButton nappi=new JButton(teksti);
 		nappi.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 120, 40);
+		nappi.setBackground(c);
+		nappi.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
+		nappi.setFont(new Font("Verdana", Font.BOLD, 12));
 		
 		return nappi;
 	}
@@ -504,7 +500,9 @@ class Elementit extends JPanel{
 		String[] lista_kuukaudet= { "tammikuuta","helmikuuta","maaliskuuta","huhtikuuta","toukokuuta","kesäkuuta","heinäkuuta","elokuuta","syyskuuta","lokakuuta","marraskuuta","joulukuuta"};
 		JComboBox<String> kuukaudet=new JComboBox<String>(lista_kuukaudet);
 		Dimension koko=kuukaudet.getPreferredSize();
-		kuukaudet.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width, koko.height);
+		kuukaudet.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width+5, koko.height);
+		kuukaudet.setBackground(Color.WHITE);
+		kuukaudet.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
 		return kuukaudet;
 	}
 	
@@ -517,7 +515,9 @@ class Elementit extends JPanel{
 		}
 		JComboBox<Integer> paivat=new JComboBox<Integer>(lista_paivat);
 		Dimension koko=paivat.getPreferredSize();
-		paivat.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width, koko.height);
+		paivat.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width+2, koko.height);
+		paivat.setBackground(Color.WHITE);
+		paivat.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
 		return paivat;
 	}
 	
@@ -537,15 +537,15 @@ class Elementit extends JPanel{
 		}
 		JComboBox<Integer> vuodet=new JComboBox<Integer>(lista_vuodet);
 		Dimension koko=vuodet.getPreferredSize();
-		vuodet.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width, koko.height);
+		vuodet.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width+5, koko.height);
+		vuodet.setBackground(Color.WHITE);
+		vuodet.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
 		return vuodet;
 	}
 	
 	//lisaaCheckBox(String teksti)-metodi lisää käyttöliittymään valintaruudun
 	public JCheckBox lisaaCheckBox(String teksti) {
 		JCheckBox luksushuone=new JCheckBox(teksti);
-		Dimension koko=getPreferredSize();
-		//luksushuone.setBackground(new Color(255,255,255));
 		luksushuone.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.BLACK));
 		luksushuone.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 13, 13);	
 		
