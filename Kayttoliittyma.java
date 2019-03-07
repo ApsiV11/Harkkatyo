@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -220,8 +221,75 @@ public class Kayttoliittyma extends JPanel{
 				//piilotetaan vanhat elementit
 				peruutus.hide();
 				varaaminen.show();
-			}
-			
+			}	
+		});
+		
+		peruuta_nappi.addActionListener(new ActionListener() {
+
+			@SuppressWarnings({ "deprecation", "static-access" })
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				UI=new UIManager();
+				UI.put("OptionPane.background", new Color(255,20,147));
+				UI.put("Panel.background", new Color(255,20,147));
+				
+				Tietokanta tk=null;
+				
+				
+				try {
+					tk=new Tietokanta();
+				} catch (EiTietokantaaPoikkeus e1) {
+					System.out.println("Tietokanta.db tiedostoa ei löytynyt");
+				}
+				
+				//Haetaan varaus_id
+				String varaus_id=vnumero.getText();
+				
+				int numero=-1;
+				boolean kayko=false;
+				//Testataan onko käyttäjä kirjoittanut tekstikenttään numeron
+				try {
+					numero=Integer.valueOf(varaus_id);
+					kayko=true;
+				}
+				catch (NumberFormatException e1) {
+					virheviesti="Syötä numero";
+					JOptionPane.showMessageDialog(ikkunankehys,
+		    			    virheviesti,
+		    			    "Virhe",
+		    			    JOptionPane.ERROR_MESSAGE);
+				}
+				
+				//Jos varaus-id on käyttökelpoinen
+				if(kayko) {
+					try {
+						//Testataan onko varausta
+						if(!tk.onkoVarausta(numero)) {
+							//Jos ei varausta, annetaan virhe
+							throw new EiKyseistaVaraustaPoikkeus();
+						}
+						
+						//Varauksen poisto
+						tk.poistaVaraus(numero);
+						
+						JOptionPane.showMessageDialog(ikkunankehys, "Varaus peruutettiin onnistuneesti","Onnistui!",JOptionPane.DEFAULT_OPTION);
+					}
+					
+					//Virheen käsittely
+					catch (EiKyseistaVaraustaPoikkeus e1) {
+						virheviesti="Varausta ei löytynyt";
+						
+						//Virheviestin luonto
+						JOptionPane.showMessageDialog(ikkunankehys,
+			    			    virheviesti,
+			    			    "Virhe",
+			    			    JOptionPane.ERROR_MESSAGE);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}	
 		});
 		
 		peruutus.add(teevaraus_nappi);
@@ -234,6 +302,7 @@ public class Kayttoliittyma extends JPanel{
 		tiedot.hide();
 		peruutus.hide();
 		
+		//Lisätään paneelit käyttöliittymään
 		sisalto.add(varaaminen);
 		sisalto.add(peruutus);
 		sisalto.add(tiedot);
@@ -244,7 +313,7 @@ public class Kayttoliittyma extends JPanel{
 	//TarkistaSisallot()-metodi tutkii käyttöliittymän objektien sisällöt ja varmistaa, että ne ovat vaatimuksien mukaiset
 	//Etu ja sukunimen pitää olla 2 ja 16 merkin välillä ja alkupäivämäärän pitää olla ennen loppupäivämäärää
 	///Lisäksi päivämäärien tulee olla mahdolliset eli 30. helmikuuta ei käy.
-	//Päivämäärien pitää olla myös nykyisen päivän jälkeen
+	//Päivämäärien pitää olla myös tästä päivästä eteenpäin
 	public boolean tarkistaSisallot() {
 		//tarkistetaan, että nimien pituus ei ole yli 32 merkkiä tai että nimi ei ole tyhjä merkkijono
 		if ((enimi.getText()).length()>=16 || (snimi.getText()).length()>=16 || (enimi.getText()).length()<2 || (snimi.getText()).length()<2){ 
