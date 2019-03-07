@@ -338,6 +338,22 @@ public class Kayttoliittyma extends JPanel{
 		
 		tiedot.add(lahetatiedot_nappi);
 		tiedot.add(takaisin_nappi);
+		
+		enimi2=new Elementit(223,30*1, sisalto.getInsets()).lisaaTeksti(" ");
+		snimi2=new Elementit(223,30*2, sisalto.getInsets()).lisaaTeksti(" ");
+		
+		tiedot.add(enimi2);
+		tiedot.add(snimi2);
+		
+		apvm_teksti2 = new Elementit(223,30*3, sisalto.getInsets()).lisaaTeksti(" ");
+		lpvm_teksti2 = new Elementit(223,30*4, sisalto.getInsets()).lisaaTeksti(" ");
+		
+		tiedot.add(apvm_teksti2);
+		tiedot.add(lpvm_teksti2);
+		
+		lh=new Elementit(223,30*5, sisalto.getInsets()).lisaaTeksti(" ");
+		
+		tiedot.add(lh);
 		//Objektien laittaminen tiedot-ikkunaan loppuu
 		
 		tiedot.hide();
@@ -350,25 +366,6 @@ public class Kayttoliittyma extends JPanel{
 		
 		//asetetaan ikkuna näkyväksi
 		ikkunankehys.setVisible(true);
-		
-		enimi2=new Elementit(223,30*1, sisalto.getInsets()).lisaaTeksti(" ");
-		snimi2=new Elementit(223,30*2, sisalto.getInsets()).lisaaTeksti(" ");
-		
-		tiedot.add(enimi2);
-		tiedot.add(snimi2);
-		
-		apvm_teksti2 = new Elementit(223,30*3, sisalto.getInsets()).lisaaTeksti(" ");
-		lpvm_teksti2 = new Elementit(223,30*4, sisalto.getInsets()).lisaaTeksti(" ");
-		
-		apvm_teksti2.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		lpvm_teksti2.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 60));
-		
-		tiedot.add(apvm_teksti2);
-		tiedot.add(lpvm_teksti2);
-		
-		lh=new Elementit(223,30*5, sisalto.getInsets()).lisaaTeksti(" ");
-		
-		tiedot.add(lh);
 	}
 	public void tyhjennaKentat() {
 		  enimi.setText("");
