@@ -124,7 +124,7 @@ public class Kayttoliittyma extends JPanel{
 		    		  //Etsitään vapaat huoneet
 		    		  Huone huone=hotelli.haeVapaa(luksushuone.isSelected(),aloitus_paiva,lopetus_paiva);
 		    		  if(huone==null) {
-		    			  JOptionPane.showMessageDialog(ikkunankehys, "Hotelli on täynnä näinä päivinä, valitse uudet päivät", "Virhe", JOptionPane.ERROR_MESSAGE);
+		    			  JOptionPane.showMessageDialog(ikkunankehys, "Hotelli on täynnä valitsemallasi aikavälillä, valitse uudet päivät", "Hotelli on täynnä", JOptionPane.ERROR_MESSAGE);
 		    		  }
 		    		  
 		    		  //Jos vapaa huone löytyy
@@ -215,7 +215,7 @@ public class Kayttoliittyma extends JPanel{
 	public boolean tarkistaSisallot() {
 		//tarkistetaan, että nimien pituus ei ole yli 32 merkkiä tai että nimi ei ole tyhjä merkkijono
 		if ((enimi.getText()).length()>=16 || (snimi.getText()).length()>=16 || (enimi.getText()).length()<2 || (snimi.getText()).length()<2){ 
-			virheviesti="Nimien pituus pitää olla 2 ja 16 välissä";
+			virheviesti="Nimien tulee olla 2-16 merkkiä";
 			return false;
 		}
 		
@@ -236,28 +236,29 @@ public class Kayttoliittyma extends JPanel{
 			lopetusDate=sdf.parse(lopetuspvm);
 		}
 		catch(Exception e) {
-			virheviesti="Päivämäärät ei mahdollisia";
+			virheviesti="Päivämäärä(t) ovat virheellisiä";
 			return false;
 		}
 		
 		//tarkistetaan, ettei lopetuspäivämäärä ole ennen aloituspäivämäärää
 		if (lopetusDate.after(aloitusDate)) {}
 		else {
-			virheviesti="Lopetuspäivämäärä on sama/ennen aloituspäivämäärää";
+			virheviesti="Varauksen loppu on sama tai ennen sen alkua";
 			return false;
 		}
 		
 		//Nykyinen päivä 
 		LocalDateTime n = LocalDateTime.now();
-		n=n.minusDays(1);
 		
 		//Vähennetään nykyhetkestä yksi, että kuluvalle päivälle voi tehdä varauksen
+		n=n.minusDays(1);
+		
 		Date nyt=java.sql.Timestamp.valueOf(n);
 		
 		//tarkistetaan, ettei aloituspäivämäärä ole ennen nykyhetkeä
 		if (aloitusDate.after(nyt)) {}
 		else {
-			virheviesti="Aloituspäivämäärä on ennen nykyhetkeä";
+			virheviesti="Varauksen alku on ennen nykyhetkeä";
 			return false;
 		}
 		return true;
@@ -310,7 +311,7 @@ class Elementit extends JPanel{
 	
 	//lisaaDropDownKuukaudet()-metodi lisää käyttöliittymään kuukauden valinta listan
 	public JComboBox<String> lisaaDropDownKuukaudet() {
-		String[] lista_kuukaudet= { "tammikuuta","helmikuuta","maaliskuta","huhtikuuta","toukokuuta","kesäkuuta","heinäkuuta","elokuuta","syyskuuta","lokakuuta","marraskuuta","joulukuuta"};
+		String[] lista_kuukaudet= { "tammikuuta","helmikuuta","maaliskuuta","huhtikuuta","toukokuuta","kesäkuuta","heinäkuuta","elokuuta","syyskuuta","lokakuuta","marraskuuta","joulukuuta"};
 		JComboBox<String> kuukaudet=new JComboBox<String>(lista_kuukaudet);
 		Dimension koko=kuukaudet.getPreferredSize();
 		kuukaudet.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, koko.width, koko.height);
