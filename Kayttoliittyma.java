@@ -1,6 +1,5 @@
-package harkkatyo2;
+package Harkkatyo;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.awt.*;
@@ -8,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,19 +23,24 @@ public class Kayttoliittyma extends JPanel{
 	private int leveys;
 	private int korkeus;
 	private JFrame ikkunankehys;
+	private JPanel varaaminen, tiedot, peruutus;
 	
-	private JLabel etunimi_teksti, sukunimi_teksti, aloitusvaraus_teksti, lopetusvaraus_teksti, luksushuone_arvo_teksti;
-	private JTextField enimi, snimi;
+	private JLabel enimi_teksti, snimi_teksti, apvm_teksti, lpvm_teksti, lh_teksti, vn_teksti;
+	private JLabel enimi_teksti2, snimi_teksti2, apvm_teksti2, lpvm_teksti2, lh_teksti2, lh, enimi2, snimi2;
+	private JTextField enimi, snimi, vnumero;
+	
 	private JComboBox<Integer> dropPaivat, dropVuodet, dropPaivat2, dropVuodet2;
 	private JComboBox<String> dropKuukaudet, dropKuukaudet2;
 	private JCheckBox luksushuone;
 	private UIManager UI;
-	private JButton poistavaraus_nappi, takaisin_nappi, naytatiedot_nappi, lahetatiedot_nappi, teevaraus_nappi;
+	
+	private JButton peruutavaraus_nappi, takaisin_nappi, naytatiedot_nappi, lahetatiedot_nappi, teevaraus_nappi, peruuta_nappi;
 
 	String aloituspvm, lopetuspvm, virheviesti;
 	
 	//Konstruktori
 	//Parametreina käyttöliittymäikkunan leveys, korkeus ja Hotelli-olio
+	@SuppressWarnings("deprecation")
 	public Kayttoliittyma(int leveys, int korkeus, Hotelli hotelli) {
 		this.hotelli=hotelli;
 		this.leveys = leveys;
@@ -63,48 +68,53 @@ public class Kayttoliittyma extends JPanel{
 		
 		Container sisalto=ikkunankehys.getContentPane();
 		
+		varaaminen=new Elementit(0, 0, sisalto.getInsets()).lisaaPaneeli(leveys, korkeus);
+		tiedot=new Elementit(0, 0, sisalto.getInsets()).lisaaPaneeli(leveys, korkeus);
+		peruutus=new Elementit(0, 0, sisalto.getInsets()).lisaaPaneeli(leveys, korkeus);
 		
-		//lisätään elementtejä: tekstit, tekstikentät, dropdownit, checkboxit, napit
+		//Objektien lisääminen varaamis-ikkunaan
+		enimi_teksti=new Elementit(10,30*1, sisalto.getInsets()).lisaaTeksti("Etunimi: ");
+		snimi_teksti=new Elementit(10,30*2, sisalto.getInsets()).lisaaTeksti("Sukunimi: ");
+		apvm_teksti=new Elementit(10,30*3, sisalto.getInsets()).lisaaTeksti("Aloituspäivämäärä: ");
+		lpvm_teksti=new Elementit(10,30*4, sisalto.getInsets()).lisaaTeksti("Lopetuspäivämäärä: ");
+		lh_teksti=new Elementit(10,30*5, sisalto.getInsets()).lisaaTeksti("Luksushuone: ");
 		
-		sisalto.add(new Elementit(10,30*1, sisalto.getInsets()).lisaaTeksti("Etunimi: "));
-		sisalto.add(new Elementit(10,30*2, sisalto.getInsets()).lisaaTeksti("Sukunimi: "));
-		sisalto.add(new Elementit(10,30*3, sisalto.getInsets()).lisaaTeksti("Aloituspäivämäärä: "));
-		sisalto.add(new Elementit(10,30*4, sisalto.getInsets()).lisaaTeksti("Lopetuspäivämäärä: "));
-		sisalto.add(new Elementit(10,30*5, sisalto.getInsets()).lisaaTeksti("Luksushuone: "));
+		varaaminen.add(enimi_teksti);
+		varaaminen.add(snimi_teksti);
+		varaaminen.add(apvm_teksti);
+		varaaminen.add(lpvm_teksti);
+		varaaminen.add(lh_teksti);
 		
 		enimi=new Elementit(223,30*1+3, sisalto.getInsets()).lisaaTekstiKentta(5);
 		snimi=new Elementit(223,30*2+3, sisalto.getInsets()).lisaaTekstiKentta(5);
 		
-		sisalto.add(enimi);
-		sisalto.add(snimi);
+		varaaminen.add(enimi);
+		varaaminen.add(snimi);
 		
-		luksushuone=new Elementit(223,30*5+8, sisalto.getInsets()).lisaaCheckBox("");
+		luksushuone=new Elementit(180,30*5+8, sisalto.getInsets()).lisaaCheckBox("");
 		
-		sisalto.add(luksushuone);
+		varaaminen.add(luksushuone);
 		
 		dropPaivat=new Elementit(223,30*3+3, sisalto.getInsets()).lisaaDropDownPaivat();
 		dropKuukaudet=new Elementit(268,30*3+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
 		dropVuodet=new Elementit(373,30*3+3, sisalto.getInsets()).lisaaDropDownVuosi();
 		
-		sisalto.add(dropPaivat);
-		sisalto.add(dropKuukaudet);
-		sisalto.add(dropVuodet);
+		varaaminen.add(dropPaivat);
+		varaaminen.add(dropKuukaudet);
+		varaaminen.add(dropVuodet);
 		
 		dropPaivat2=new Elementit(223,30*4+3, sisalto.getInsets()).lisaaDropDownPaivat();
 		dropKuukaudet2=new Elementit(268,30*4+3, sisalto.getInsets()).lisaaDropDownKuukaudet();
 		dropVuodet2=new Elementit(373,30*4+3, sisalto.getInsets()).lisaaDropDownVuosi();
 		
-		sisalto.add(dropPaivat2);
-		sisalto.add(dropKuukaudet2);
-		sisalto.add(dropVuodet2);
-		
-		
-		
+		varaaminen.add(dropPaivat2);
+		varaaminen.add(dropKuukaudet2);
+		varaaminen.add(dropVuodet2);
 		
 		takaisin_nappi=new Elementit(180,30*6+25, sisalto.getInsets()).lisaaNappi("Takaisin");
 		lahetatiedot_nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Lähetä tiedot");
-		naytatiedot_nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Näytä tiedot");
-		poistavaraus_nappi=new Elementit(30,30*6+25, sisalto.getInsets()).lisaaNappi("Poista varaus");
+		naytatiedot_nappi=new Elementit(180,30*6+25, sisalto.getInsets()).lisaaNappi("Näytä tiedot");
+		peruutavaraus_nappi=new Elementit(30,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta varaus");
 		
 		//Lähetä-napin painallusta tarkkaileva metodi
 		lahetatiedot_nappi.addActionListener(new ActionListener() {
@@ -114,97 +124,81 @@ public class Kayttoliittyma extends JPanel{
 				UI=new UIManager();
 				UI.put("OptionPane.background", new Color(255,20,147));
 				UI.put("Panel.background", new Color(255,20,147));
+				
+				boolean oikeellisuus=tarkistaSisallot();
+		    	 
+				//Jos tiedot ovat kunnossa
+				if(oikeellisuus){
 					//Luodaan päivä-oliot vertailua varten
-				Date aloitus_paiva=new Date(dropVuodet.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet.getSelectedIndex(), dropPaivat.getSelectedIndex()+1);
-				Date lopetus_paiva=new Date(dropVuodet2.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet2.getSelectedIndex(), dropPaivat2.getSelectedIndex()+1);
-		   		  
-		   		  //Etsitään vapaat huoneet
-		   		  Huone huone=hotelli.haeVapaa(luksushuone.isSelected(),aloitus_paiva,lopetus_paiva);
-		   		  if(huone==null) {
-	    			  JOptionPane.showMessageDialog(ikkunankehys, "Hotelli on täynnä valitsemallasi aikavälillä, valitse uudet päivät", "Hotelli on täynnä", JOptionPane.ERROR_MESSAGE);
-	    		  }		    		  
-		    	  //Jos vapaa huone löytyy
-		    	  else{
-		   			  //Otetaan tiedot käyttöliittymästä
-		   			  String varaaja=enimi.getText()+" "+snimi.getText();
-		    		  boolean onko_luksus=luksushuone.isSelected();
-		    		  
-		    		  //Luodaan Varaus-olio
-		    		  Varaus varaus=new Varaus(huone.getNumero(), varaaja, aloitus_paiva, lopetus_paiva, onko_luksus);
-			    	  
-			    	  //Lähetetään tiedot tietokantaan
-			   		  varaus.varausTietokantaan();
-			   		  
-			   		  JOptionPane.showMessageDialog(ikkunankehys, "Varaus tehtiin onnistuneesti","Onnistui!",JOptionPane.DEFAULT_OPTION);
-			   		  
-		    		  
-		    		  //tyhjentää elementit arvoistaan
-			   		  
-			   		  
-			   		  piilotaTietoElementit();
-			   		  tyhjennaKentat();
-		    		  
-		    		  naytaElementit();
-		    		  naytatiedot_nappi.show();
-		    		  }}
-		});
+					Date aloitus_paiva=new Date(dropVuodet.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet.getSelectedIndex(), dropPaivat.getSelectedIndex()+1);
+					Date lopetus_paiva=new Date(dropVuodet2.getSelectedIndex()-1900+Calendar.getInstance().get(Calendar.YEAR), dropKuukaudet2.getSelectedIndex(), dropPaivat2.getSelectedIndex()+1);
+			   		
+					//Etsitään vapaat huoneet
+			   		Huone huone=hotelli.haeVapaa(luksushuone.isSelected(),aloitus_paiva,lopetus_paiva);
+			   		if(huone==null) {
+			   			JOptionPane.showMessageDialog(ikkunankehys, "Hotelli on täynnä valitsemallasi aikavälillä, valitse uudet päivät", "Hotelli on täynnä", JOptionPane.ERROR_MESSAGE);
+			   			}		    		  
+			   		//Jos vapaa huone löytyy
+		    		else{
+		    			//Otetaan tiedot käyttöliittymästä
+		    			String varaaja=enimi.getText()+" "+snimi.getText();
+			    		boolean onko_luksus=luksushuone.isSelected();
+			    		  
+			    		//Luodaan Varaus-olio
+			    		Varaus varaus=new Varaus(huone.getNumero(), varaaja, aloitus_paiva, lopetus_paiva, onko_luksus);
+			    		  
+			    		//Lähetetään tiedot tietokantaan
+			    		varaus.varausTietokantaan();
+			    		  
+			    		JOptionPane.showMessageDialog(ikkunankehys, "Varaus tehtiin onnistuneesti","Onnistui!",JOptionPane.DEFAULT_OPTION);
+			    		
+			    		//tyhjentää elementit arvoistaan
+			    		tyhjennaKentat();
+						}
+			   		}
+				else {
+					JOptionPane.showMessageDialog(ikkunankehys, 
+							virheviesti,
+							"Virhe",
+			    			JOptionPane.ERROR_MESSAGE);
+			    	  }
+				}
+			});
 		
+		//Näytä-napin metodi
 		naytatiedot_nappi.addActionListener(new ActionListener() {
 
 			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(tarkistaSisallot()){
-				//piilotetaan vanhat elementit
-					
-				enimi.hide();
-	    		snimi.hide();
-	    		luksushuone.hide();
-	    		dropPaivat.hide();
-	    		dropKuukaudet.hide();
-	    		dropVuodet.hide();
-	    		dropPaivat2.hide();
-	    		dropKuukaudet2.hide();
-	    		dropVuodet2.hide();
+				//piilotetaan vanhat elementit	
+				varaaminen.hide();
 	    		
 	    		
 	    		//lisätään teksti paikoilleen
-	    		etunimi_teksti=new Elementit(223,30*1, sisalto.getInsets()).lisaaTeksti(enimi.getText());
-	    		sukunimi_teksti=new Elementit(223,30*2, sisalto.getInsets()).lisaaTeksti(snimi.getText());
-	    		
-	    		String aloituspvm=String.valueOf(dropPaivat.getSelectedIndex()+1)+"."+String.valueOf(dropKuukaudet.getSelectedItem())+"."+String.valueOf(dropVuodet.getSelectedItem());
-	    		String lopetuspvm=String.valueOf(dropPaivat2.getSelectedIndex()+1)+"."+String.valueOf(dropKuukaudet2.getSelectedItem())+"."+String.valueOf(dropVuodet2.getSelectedItem());
-	    		
-	    		sisalto.add(etunimi_teksti);
-	    		sisalto.add(sukunimi_teksti);
-	    		
-	    		aloitusvaraus_teksti = new Elementit(223,30*3, sisalto.getInsets()).lisaaTeksti(aloituspvm);
-	    		lopetusvaraus_teksti = new Elementit(223,30*4, sisalto.getInsets()).lisaaTeksti(lopetuspvm);
-	    		
-	    		aloitusvaraus_teksti.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-	    		lopetusvaraus_teksti.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 60));
-	    		
-	    		sisalto.add(aloitusvaraus_teksti);
-	    		sisalto.add(lopetusvaraus_teksti);
+				tiedot.show();
 				
-	    		String luksushuone_arvo;
-	    		
-	    		if (luksushuone.isSelected()) {
-	    			luksushuone_arvo="Kyllä";
-	    		}else {
-	    			luksushuone_arvo="Ei";
-	    		}
-	    		luksushuone_arvo_teksti=new Elementit(223,30*5, sisalto.getInsets()).lisaaTeksti(luksushuone_arvo);
-	    		
-	    		
-	    		
-	    		sisalto.add(luksushuone_arvo_teksti);
-	    		sisalto.add(lahetatiedot_nappi);
-	    		sisalto.add(takaisin_nappi);
-	    		
-	    		takaisin_nappi.show();
-	    		naytatiedot_nappi.hide();
-	    		lahetatiedot_nappi.show();
+				//Objekttien päivittäminen tiedot-ikkunaan
+				enimi2.setText(enimi.getText());
+				snimi2.setText(snimi.getText());
+				
+				String aloituspvm=String.valueOf(dropPaivat.getSelectedIndex()+1)+". "+String.valueOf(dropKuukaudet.getSelectedItem())+" "+String.valueOf(dropVuodet.getSelectedItem());
+				String lopetuspvm=String.valueOf(dropPaivat2.getSelectedIndex()+1)+". "+String.valueOf(dropKuukaudet2.getSelectedItem())+" "+String.valueOf(dropVuodet2.getSelectedItem());
+				
+				apvm_teksti2.setText(aloituspvm);
+				lpvm_teksti2.setText(lopetuspvm);
+				
+				String luksushuone_arvo;
+				
+				if (luksushuone.isSelected()) {
+					luksushuone_arvo="Kyllä";
+				}else {
+					luksushuone_arvo="Ei";
+				}
+				lh.setText(luksushuone_arvo);
+				
+				//Objektien päivittäminen tiedot-ikkunaan loppuu
 	    		
 			}else {
 
@@ -220,76 +214,194 @@ public class Kayttoliittyma extends JPanel{
 			
 		});
 		
-		poistavaraus_nappi.addActionListener(new ActionListener() {
+		//Peruuta-napin metodi
+		peruutavaraus_nappi.addActionListener(new ActionListener() {
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public void actionPerformed(ActionEvent e) {		
+				//Piilotetaan vanhat elementit
+				varaaminen.hide();
+				
+	    		//Tehdään peruutus-ikkunan näkyväksi
+	    		peruutus.show();
+			}	
+		});
+		
+		varaaminen.add(lahetatiedot_nappi);
+		varaaminen.add(naytatiedot_nappi);
+		varaaminen.add(peruutavaraus_nappi);
+		//Objektien laittaminen varaamis-ikkunaan loppuu
+		
+		//Objektit peruutus-ikkunaan
+		vn_teksti=new Elementit(150,30*2, sisalto.getInsets()).lisaaTeksti("Varausnumero: ");
+		peruutus.add(vn_teksti);
+		
+		vnumero=new Elementit(150,30*3+3, sisalto.getInsets()).lisaaTekstiKentta(-24);
+		peruutus.add(vnumero);
+		
+		teevaraus_nappi=new Elementit(30,30*6+25, sisalto.getInsets()).lisaaNappi("Tee varaus");
+		peruuta_nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta");
+		
+		teevaraus_nappi.addActionListener(new ActionListener() {
 
 			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//IMPLEMENTOI VARAUKSEN POISTOIKKUNAAN VAIHTAMINEN
-
-			}
-			
-		});
+				//piilotetaan vanhat elementit
+				peruutus.hide();
+				varaaminen.show();
+				}	
+			});
 		
 		takaisin_nappi.addActionListener(new ActionListener(){
 
 			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				piilotaTietoElementit();
+				tiedot.hide();
 				
-				naytaElementit();
+				varaaminen.show();
 	    		
 			}
 			
 		});
 		
+		peruuta_nappi.addActionListener(new ActionListener() {
 
-		sisalto.add(naytatiedot_nappi);
-		sisalto.add(poistavaraus_nappi);
+			@SuppressWarnings({ "deprecation", "static-access" })
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				UI=new UIManager();
+				UI.put("OptionPane.background", new Color(255,20,147));
+				UI.put("Panel.background", new Color(255,20,147));
+				
+				Tietokanta tk=null;
+				
+				
+				try {
+					tk=new Tietokanta();
+				} catch (EiTietokantaaPoikkeus e1) {
+					System.out.println("Tietokanta.db tiedostoa ei löytynyt");
+				}
+				
+				//Haetaan varaus_id
+				String varaus_id=vnumero.getText();
+				
+				int numero=-1;
+				boolean kayko=false;
+				//Testataan onko käyttäjä kirjoittanut tekstikenttään numeron
+				try {
+					numero=Integer.valueOf(varaus_id);
+					kayko=true;
+				}
+				catch (NumberFormatException e1) {
+					virheviesti="Syötä numero";
+					JOptionPane.showMessageDialog(ikkunankehys,
+		    			    virheviesti,
+		    			    "Virhe",
+		    			    JOptionPane.ERROR_MESSAGE);
+				}
+				
+				//Jos varaus-id on käyttökelpoinen
+				if(kayko) {
+					try {
+						//Testataan onko varausta
+						if(!tk.onkoVarausta(numero)) {
+							//Jos ei varausta, annetaan virhe
+							throw new EiKyseistaVaraustaPoikkeus();
+						}
+						
+						//Varauksen poisto
+						tk.poistaVaraus(numero);
+						
+						JOptionPane.showMessageDialog(ikkunankehys, "Varaus peruutettiin onnistuneesti","Onnistui!",JOptionPane.DEFAULT_OPTION);
+					}
+					
+					//Virheen käsittely
+					catch (EiKyseistaVaraustaPoikkeus e1) {
+						virheviesti="Varausta ei löytynyt";
+						
+						//Virheviestin luonto
+						JOptionPane.showMessageDialog(ikkunankehys,
+			    			    virheviesti,
+			    			    "Virhe",
+			    			    JOptionPane.ERROR_MESSAGE);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}	
+		});
+		
+		peruutus.add(teevaraus_nappi);
+		peruutus.add(peruuta_nappi);
+		//Objektien laittaminen peruutus-ikkunaan loppuu
+		
+		//Objektit tiedot-ikkunaan
+		enimi_teksti2=new Elementit(10,30*1, sisalto.getInsets()).lisaaTeksti("Etunimi: ");
+		snimi_teksti2=new Elementit(10,30*2, sisalto.getInsets()).lisaaTeksti("Sukunimi: ");
+		apvm_teksti2=new Elementit(10,30*3, sisalto.getInsets()).lisaaTeksti("Aloituspäivämäärä: ");
+		lpvm_teksti2=new Elementit(10,30*4, sisalto.getInsets()).lisaaTeksti("Lopetuspäivämäärä: ");
+		lh_teksti2=new Elementit(10,30*5, sisalto.getInsets()).lisaaTeksti("Luksushuone: ");
+		
+		tiedot.add(enimi_teksti2);
+		tiedot.add(snimi_teksti2);
+		tiedot.add(apvm_teksti2);
+		tiedot.add(lpvm_teksti2);
+		tiedot.add(lh_teksti2);
+		
+		tiedot.add(lahetatiedot_nappi);
+		tiedot.add(takaisin_nappi);
+		//Objektien laittaminen tiedot-ikkunaan loppuu
+		
+		tiedot.hide();
+		peruutus.hide();
+		
+		//Lisätään paneelit käyttöliittymään
+		sisalto.add(varaaminen);
+		sisalto.add(peruutus);
+		sisalto.add(tiedot);
+		
 		//asetetaan ikkuna näkyväksi
 		ikkunankehys.setVisible(true);
+		
+		enimi2=new Elementit(223,30*1, sisalto.getInsets()).lisaaTeksti(" ");
+		snimi2=new Elementit(223,30*2, sisalto.getInsets()).lisaaTeksti(" ");
+		
+		tiedot.add(enimi2);
+		tiedot.add(snimi2);
+		
+		apvm_teksti2 = new Elementit(223,30*3, sisalto.getInsets()).lisaaTeksti(" ");
+		lpvm_teksti2 = new Elementit(223,30*4, sisalto.getInsets()).lisaaTeksti(" ");
+		
+		apvm_teksti2.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		lpvm_teksti2.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 60));
+		
+		tiedot.add(apvm_teksti2);
+		tiedot.add(lpvm_teksti2);
+		
+		lh=new Elementit(223,30*5, sisalto.getInsets()).lisaaTeksti(" ");
+		
+		tiedot.add(lh);
 	}
 	public void tyhjennaKentat() {
 		  enimi.setText("");
 		  snimi.setText("");
-  	  luksushuone.setSelected(false);
-  	  dropPaivat.setSelectedIndex(0);
+		  luksushuone.setSelected(false);
+		  dropPaivat.setSelectedIndex(0);
  		  dropKuukaudet.setSelectedIndex(0);
  		  dropVuodet.setSelectedIndex(0);
  		  dropPaivat2.setSelectedIndex(0);
  		  dropKuukaudet2.setSelectedIndex(0);
 		  dropVuodet2.setSelectedIndex(0);
 	}
-	@SuppressWarnings("deprecation")
-	public void piilotaTietoElementit() {
-		etunimi_teksti.hide();
-		sukunimi_teksti.hide();
-		aloitusvaraus_teksti.hide();
-		lopetusvaraus_teksti.hide();
-		luksushuone_arvo_teksti.hide();
-		lahetatiedot_nappi.hide();
-		takaisin_nappi.hide();
-	}
-	@SuppressWarnings("deprecation")
-	public void naytaElementit() {
-		naytatiedot_nappi.show();
-		enimi.show();
-		snimi.show();
-		luksushuone.show();
-		dropPaivat.show();
-		dropKuukaudet.show();
-		dropVuodet.show();
-		dropPaivat2.show();
-		dropKuukaudet2.show();
-		dropVuodet2.show();
-	}
 	
 	//TarkistaSisallot()-metodi tutkii käyttöliittymän objektien sisällöt ja varmistaa, että ne ovat vaatimuksien mukaiset
 	//Etu ja sukunimen pitää olla 2 ja 16 merkin välillä ja alkupäivämäärän pitää olla ennen loppupäivämäärää
 	///Lisäksi päivämäärien tulee olla mahdolliset eli 30. helmikuuta ei käy.
-	//Päivämäärien pitää olla myös nykyisen päivän jälkeen
-	
+	//Päivämäärien pitää olla myös tästä päivästä eteenpäin
 	public boolean tarkistaSisallot() {
 		//tarkistetaan, että nimien pituus ei ole yli 32 merkkiä tai että nimi ei ole tyhjä merkkijono
 		if ((enimi.getText()).length()>=16 || (snimi.getText()).length()>=16 || (enimi.getText()).length()<2 || (snimi.getText()).length()<2){ 
@@ -305,7 +417,6 @@ public class Kayttoliittyma extends JPanel{
 		Date aloitusDate=null;
 		Date lopetusDate=null;
 
-	
 		//muutetaan päivämäärät Date -olioiksi, ja samalla tarkastetaan onko ne mahdollisia
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		sdf.setLenient(false);
@@ -439,5 +550,14 @@ class Elementit extends JPanel{
 		luksushuone.setBounds(koot.left+sijaintiX, sijaintiY+koot.top, 13, 13);	
 		
 		return luksushuone;
+	}
+	
+	//lisaaCheckBox(String teksti)-metodi lisää käyttöliittymään valintaruudun
+	public JPanel lisaaPaneeli(int leveys, int korkeus) {
+		JPanel paneeli=new JPanel(null);
+		paneeli.setBounds(0, 0, leveys, korkeus);
+		paneeli.setOpaque(false);
+		
+		return paneeli;
 	}
 }

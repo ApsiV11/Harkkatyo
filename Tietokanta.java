@@ -126,56 +126,46 @@ public class Tietokanta {
 		return lista;
 	}
 	
-	//haeVaraus(int varaus_id)-metodi hakee tietokannasta yksittäisen Varauksen
-	@SuppressWarnings("deprecation")
-	public Varaus haeVaraus(int varaus_id) throws SQLException {
-		
-		//Tietokantaan yhdistys
+	public void poistaVaraus(int varaus_id) throws SQLException, EiKyseistaVaraustaPoikkeus {
+		//Tietokantaan yhdistäminen
 		Connection yhteys=yhdistaTietokantaan();
 		
-		//SQL-komennon valmistelu
-		PreparedStatement lause=yhteys.prepareStatement("SELECT * FROM Varaukset WHERE varaus_nro="+varaus_id);
+		//SQL-kutsun valmistelu
+		PreparedStatement lause=yhteys.prepareStatement("DELETE FROM Varaukset WHERE varaus_nro="+varaus_id);
 		
-		//ResultSet olion alustus
+		int rs=lause.executeUpdate();
+		
+		yhteys.close();
+	}
+	
+	public boolean onkoVarausta(int varaus_id) {
+		//Tietokantaan yhdistäminen
+		Connection yhteys=yhdistaTietokantaan();
+		
 		ResultSet rs=null;
 		
-		//Virheen käsittely, jos kyseistä varausta ei ole olemassa
+		//SQL-kutsun valmistelu
+		PreparedStatement lause;
 		try {
+			lause = yhteys.prepareStatement("SELECT * FROM Varaukset WHERE varaus_nro="+varaus_id);
+			
 			rs=lause.executeQuery();
 			
-			if(!rs.first()) {
-				throw new EiKyseistaVaraustaPoikkeus();
+			int maara=0;
+			
+			while(rs.next()) {
+				maara++;
 			}
-		}
-		
-		//Catch-lohko virhettä varten
-		catch(EiKyseistaVaraustaPoikkeus e) {
+			if(maara<1) {
+				return false;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		//Haetaan tiedot tietokannasta
-		int huone_id=rs.getInt("hotelli_huone");
-		String varaaja=rs.getString("varaaja");
-		String varaus_alku=rs.getString("varaus_alku");
-		String varaus_loppu=rs.getString("varaus_loppu");
-		int ol=rs.getInt("onko_luksus");
-		boolean onko_luksus=false;
 		
-		//Boolean arvon luonti tietokannan ykkösestä tai nollasta
-		if(ol==1) {
-			onko_luksus=true;
-		}
-		
-		//Date-olioiden luonti
-		Date aloitus_paiva=new Date(Integer.parseInt(varaus_alku.substring(6, 10)),Integer.parseInt(varaus_alku.substring(3, 5)),Integer.parseInt(varaus_alku.substring(0, 2)));
-		Date lopetus_paiva=new Date(Integer.parseInt(varaus_loppu.substring(6, 10)),Integer.parseInt(varaus_loppu.substring(3, 5)),Integer.parseInt(varaus_loppu.substring(0, 2)));
-		
-		//Luodaan Varaus-olio ylläolevista tiedoista
-		Varaus varaus=new Varaus(huone_id,varaaja,aloitus_paiva,lopetus_paiva,onko_luksus);
-		
-		//Suljetaan yhteys
-		yhteys.close();
-		return varaus;
+		return true;
 	}
 }
 
