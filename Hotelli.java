@@ -12,22 +12,34 @@ public class Hotelli {
 	private final int huonemaara;
 	private final int luksushuoneet;
 	private final ArrayList<Huone> huoneet=new ArrayList<Huone>();
+	private final Perushuone ph;
+	private final Luksushuone lh;
 	
 	//Konstruktori saa parametrinaan huoneiden m‰‰r‰n ja luksushuoneiden m‰‰r‰n
 	//Perushuoneita on huonemaara-luksushuoneet ja Luksushuoneita luksushuoneet-parametrin maara
-	public Hotelli(int huonemaara, int luksushuoneet){
+	public Hotelli(int huonemaara, int luksushuoneet, int hmaara_perus, int hinta_perus, int hmaara_luksus, int hinta_luksus){
 		this.huonemaara=huonemaara;
 		this.luksushuoneet=luksushuoneet;
+		this.ph=new Perushuone(hinta_perus, 0, hmaara_perus);
+		this.lh=new Luksushuone(hinta_luksus, 0, hmaara_luksus);
 		
 		for(int i=0;i<huonemaara-luksushuoneet;i++) {
-			huoneet.add(new Perushuone(i,4));
+			huoneet.add(new Perushuone(hinta_perus, i, hmaara_perus));
 		}
 		for(int i=0;i<luksushuoneet;i++) {
-			huoneet.add(new Luksushuone(i,2));
+			huoneet.add(new Luksushuone(hinta_luksus, i, hmaara_luksus));
 		}
 	}
 	
-	
+	public Perushuone getPh() {
+		return ph;
+	}
+
+	public Luksushuone getLh() {
+		return lh;
+	}
+
+
 	//haeVapaa(boolean onko_luksus,Date aloitus_paiva,Date lopetus_paiva)-metodi hakee Hotelli-oliosta ensimm‰isen vapaan Huone-olion.
 	//Funktio palauttaa tyhj‰n Huone-olion, jos kaikki huoneet on varattu kyseisell‰ aikav‰lill‰
 	@SuppressWarnings("deprecation")

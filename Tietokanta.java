@@ -1,14 +1,11 @@
 package Harkkatyo;
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 /*Tietokanta-luokka käsittelee SQL-tietokannassa olevaa tietoa
@@ -23,7 +20,6 @@ public class Tietokanta {
 	private final String url="jdbc:sqlite:Tietokanta.db";
 	
 	//Konstruktori
-	@SuppressWarnings("deprecation")
 	public Tietokanta() throws EiTietokantaaPoikkeus {
 		boolean olemassa=onkoTietokantaa();
 		
@@ -133,7 +129,7 @@ public class Tietokanta {
 		//SQL-kutsun valmistelu
 		PreparedStatement lause=yhteys.prepareStatement("DELETE FROM Varaukset WHERE varaus_nro="+varaus_id);
 		
-		int rs=lause.executeUpdate();
+		lause.executeUpdate();
 		
 		yhteys.close();
 	}
