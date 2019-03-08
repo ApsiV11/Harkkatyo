@@ -2,6 +2,7 @@ package Harkkatyo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,7 +37,8 @@ public class Varaus {
 	}
 	
 	//varausTietokantaan()-metodi vie kyseisen Varaus-olion tiedot tietokantaan
-	public void varausTietokantaan() {	
+	//Metodi palauttaa varauksen varausnumeron
+	public int varausTietokantaan() {	
 		//Tietokanta olion luonti
 		Tietokanta tk=null;
 		try {
@@ -62,6 +64,8 @@ public class Varaus {
 		if(onko_luksus) {
 			luksus=1;
 		}
+		
+		int vnumero=-1;
 		try {
 			//Luodaan SQL-komento
 			PreparedStatement lause=yhteys.prepareStatement("INSERT INTO Varaukset (hotelli_huone, varaaja, varaus_alku,"
@@ -69,6 +73,15 @@ public class Varaus {
 			
 			//Suoritetaan päivityskomento
 			lause.executeUpdate();
+			
+			//Haetaan varausnumero
+			PreparedStatement lause2=yhteys.prepareStatement("SELECT varaus_nro FROM Varaukset WHERE hotelli_huone="+this.huone_id+" AND varaaja=\""+this.varaaja+"\" AND varaus_alku=\""+alku+"\" AND varaus_loppu=\""+loppu+"\" AND onko_luksus="+luksus+";");
+			
+			ResultSet rs=lause2.executeQuery();
+			
+			rs.next();
+			
+			vnumero=rs.getInt("varaus_nro");
 			
 			System.out.println("Tiedot siirretty onnistuneesti");
 			
@@ -80,6 +93,8 @@ public class Varaus {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
+		//Palautetaan varauksen numero
+		return vnumero;
 	}
 }
 

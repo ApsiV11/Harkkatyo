@@ -148,9 +148,9 @@ public class Kayttoliittyma extends JPanel{
 			    		Varaus varaus=new Varaus(huone.getNumero(), varaaja, aloitus_paiva, lopetus_paiva, onko_luksus);
 			    		  
 			    		//Lähetetään tiedot tietokantaan
-			    		varaus.varausTietokantaan();
+			    		int vnumero=varaus.varausTietokantaan();
 			    		  
-			    		lisaaDialogi(ikkunankehys, "Varaus tehtiin onnistuneesti","Onnistui!",JOptionPane.DEFAULT_OPTION);
+			    		lisaaDialogi(ikkunankehys, "Varaus tehtiin onnistuneesti. Varausnumerosi on "+vnumero,"Onnistui!",JOptionPane.DEFAULT_OPTION);
 			    		
 			    		//tyhjentää elementit arvoistaan
 			    		tyhjennaKentat();
@@ -233,6 +233,7 @@ public class Kayttoliittyma extends JPanel{
 		teevaraus_nappi=new Elementit(30,30*6+25, sisalto.getInsets()).lisaaNappi("Tee varaus", Color.PINK);
 		peruuta_nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta varaus", Color.GREEN);
 		
+		//Tee varaus-napin metodi
 		teevaraus_nappi.addActionListener(new ActionListener() {
 
 			@SuppressWarnings("deprecation")
@@ -244,6 +245,7 @@ public class Kayttoliittyma extends JPanel{
 				}	
 			});
 		
+		//Takaisin napin metodi
 		takaisin_nappi.addActionListener(new ActionListener(){
 
 			@SuppressWarnings("deprecation")
@@ -257,6 +259,7 @@ public class Kayttoliittyma extends JPanel{
 			
 		});
 		
+		//Peruuta-napin metodi
 		peruuta_nappi.addActionListener(new ActionListener() {
 
 			@SuppressWarnings({ "deprecation", "static-access" })
