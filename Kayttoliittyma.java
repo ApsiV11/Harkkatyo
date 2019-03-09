@@ -411,6 +411,18 @@ public class Kayttoliittyma extends JPanel{
 			return false;
 		}
 		
+		//Tarkistetaan, että nimissä on vain kirjaimia
+		char[] nimi=(enimi.getText()+snimi.getText()).toCharArray();
+		
+		String kirjaimet="abcdefghijklmnopqrstuvwxyzåäö-";
+		
+		for(char c:nimi) {
+			if(!kirjaimet.contains(Character.toString(Character.toLowerCase(c)))) {
+				virheviesti="Nimessäsi on kirjoitusvirhe";
+				return false;
+			}
+		}
+		
 		//parsitaan päivämäärät "dd-MM-yyyy" -muotoon
 		
 		String aloituspvm=String.valueOf(dropPaivat.getSelectedIndex()+1)+"-"+String.valueOf(dropKuukaudet.getSelectedIndex()+1)+"-"+String.valueOf(dropVuodet.getSelectedItem());
