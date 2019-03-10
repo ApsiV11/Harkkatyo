@@ -117,7 +117,7 @@ public class Kayttoliittyma extends JPanel{
 		
 		takaisin_nappi=new Elementit(60,30*6+25, sisalto.getInsets()).lisaaNappi("Takaisin", Color.PINK);
 		lahetatiedot_nappi=new Elementit(300,30*6+25, sisalto.getInsets()).lisaaNappi("Lähetä tiedot", Color.GREEN);
-		naytatiedot_nappi=new Elementit(300,30*6+25, sisalto.getInsets()).lisaaNappi("Näytä tiedot", Color.GREEN);
+		naytatiedot_nappi=new Elementit(300,30*6+25, sisalto.getInsets()).lisaaNappi("Vahvista tiedot", Color.GREEN);
 		peruutavaraus_nappi=new Elementit(60,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta varaus", Color.PINK);
 		
 		//Lähetä-napin painallusta tarkkaileva metodi
@@ -239,8 +239,8 @@ public class Kayttoliittyma extends JPanel{
 		vnumero=new Elementit(160,30*3, sisalto.getInsets()).lisaaTekstiKentta(-40);
 		peruutus.add(vnumero);
 		
-		teevaraus_nappi=new Elementit(30,30*6+25, sisalto.getInsets()).lisaaNappi("Tee varaus", Color.PINK);
-		peruuta_nappi=new Elementit(330,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta varaus", Color.GREEN);
+		teevaraus_nappi=new Elementit(60,30*6+25, sisalto.getInsets()).lisaaNappi("Takaisin", Color.PINK);
+		peruuta_nappi=new Elementit(300,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta varaus", Color.GREEN);
 		
 		//Tee varaus-napin metodi
 		teevaraus_nappi.addActionListener(new ActionListener() {
