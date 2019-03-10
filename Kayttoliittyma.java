@@ -240,7 +240,7 @@ public class Kayttoliittyma extends JPanel{
 		peruutus.add(vnumero);
 		
 		teevaraus_nappi=new Elementit(60,30*6+25, sisalto.getInsets()).lisaaNappi("Takaisin", Color.PINK);
-		peruuta_nappi=new Elementit(300,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta varaus", Color.GREEN);
+		peruuta_nappi=new Elementit(300,30*6+25, sisalto.getInsets()).lisaaNappi("Peruuta", Color.GREEN);
 		
 		//Tee varaus-napin metodi
 		teevaraus_nappi.addActionListener(new ActionListener() {
