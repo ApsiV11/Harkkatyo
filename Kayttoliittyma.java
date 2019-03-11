@@ -467,13 +467,13 @@ public class Kayttoliittyma extends JPanel{
 		return true;
 	}
 	
-	//lisaaDialogi(String teksti, Container ikkunankehys, int value) palauttaa uuden ilmoitus olion
-		public void lisaaDialogi(Container ikkunankehys, String teksti, String nimi, int value) {
-			JLabel viesti=new JLabel(teksti);
-			viesti.setFont(new Font("Verdana", Font.BOLD, 14));
-			
-			JOptionPane.showMessageDialog(ikkunankehys, viesti, nimi, value);
-		}
+	//lisaaDialogi(String teksti, Container ikkunankehys, int value) luo uuden ilmoitus-ikkunan
+	public void lisaaDialogi(Container ikkunankehys, String teksti, String nimi, int value) {
+		JLabel viesti=new JLabel(teksti);
+		viesti.setFont(new Font("Verdana", Font.BOLD, 14));
+		
+		JOptionPane.showMessageDialog(ikkunankehys, viesti, nimi, value);
+	}
 }
 
 //Elementit-luokka käyttöliittymää varten
@@ -582,7 +582,7 @@ class Elementit extends JPanel{
 		return luksushuone;
 	}
 	
-	//lisaaCheckBox(String teksti)-metodi lisää käyttöliittymään valintaruudun
+	//lisaaPaneeli(int leveys, int korkeus)-metodi lisää käyttöliittymään uuden JPanel-olion, johon muut komponentit laitetaan
 	public JPanel lisaaPaneeli(int leveys, int korkeus) {
 		JPanel paneeli=new JPanel(null);
 		paneeli.setBounds(0, 0, leveys, korkeus);
